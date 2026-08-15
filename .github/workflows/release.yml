@@ -63,15 +63,20 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME#v}"
 
-          # The trailing `grep -v` drops Keep-a-Changelog link definitions — `[Unreleased]: https://…`
-          # sits at the foot of the file with no heading after it, so the section reader keeps
-          # scanning past the prose and into it.
+          # The `grep -v` drops Keep-a-Changelog link definitions — `[Unreleased]: https://…` sits at
+          # the foot of the file with no heading after it, so the section reader keeps scanning past
+          # the prose and into it.
+          #
+          # `|| true` because GitHub runs this step under `bash -e` and **grep exits 1 when it selects
+          # no lines**. Looking for a `## [0.1.0]` section that does not exist yet produces no input,
+          # grep reports "nothing matched", and the whole step aborts before the fallback below can
+          # run — which is precisely the case the fallback exists for.
           section() {
             awk -v want="$1" '
               $0 ~ "^## \\[?" want "\\]?" { f=1; next }
               f && /^## / { exit }
               f { print }
-            ' CHANGELOG.md | grep -v '^\[.*\]: http'
+            ' CHANGELOG.md | grep -v '^\[.*\]: http' || true
           }
 
           notes=$(section "$version")

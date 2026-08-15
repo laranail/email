@@ -3,10 +3,13 @@
 #
 # Windows is in the matrix because path handling is the one thing that genuinely differs, and it
 # differs silently — a case-insensitive filesystem resolves a mis-cased namespace that Linux does not,
-# and a directory separator baked into a string works on one and not the other. It also has to be
-# told about `ext-fileinfo` explicitly, which is what broke this workflow: the Linux runner enables it
-# by default and the Windows one does not, so `league/flysystem-local` (via laravel/framework) failed
-# to resolve on four of the eight legs while the other four went green.
+# and a directory separator baked into a string works on one and not the other.
+#
+# It has also caught the same defect twice, in the same shape: an extension the Linux runner enables
+# by default and the Windows one does not. `fileinfo` first — `league/flysystem-local` could not
+# resolve, so composer failed before a test ran — then `pdo_sqlite`, without which every test that
+# touches a database dies on "could not find driver" while the four Linux legs stay green. Both are
+# named explicitly below, and anything new that needs a driver should join them.
 
 name: run-tests
 
@@ -43,7 +46,7 @@ jobs:
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, pdo_sqlite, sqlite3
           coverage: none
 
       - name: Cache Composer files
