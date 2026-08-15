@@ -3,9 +3,9 @@ contact_links:
   - name: Ask a question
     url: https://github.com/laranail/email/discussions/new?category=q-a
     about: Ask the community for help
-  - name: Request a feature
+  - name: Share an idea
     url: https://github.com/laranail/email/discussions/new?category=ideas
-    about: Share ideas for new features
+    about: Open-ended proposals are easier to discuss there than in an issue
   - name: Report a security issue
     url: https://github.com/laranail/email/security/policy
-    about: Learn how to notify us for sensitive bugs
+    about: Please do not open a public issue for a vulnerability

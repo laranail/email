@@ -1,25 +1,54 @@
+# Named `phpstan` for the badge's sake, but it runs the whole static leg — PHPStan, Pint and Rector —
+# matching `laranail/phone`'s. Splitting them across workflows only means three places to notice a
+# red tick.
+#
+# Rector runs in `--dry-run`. The `composer rector` script used to call `process`, which *applies*
+# changes: on CI that is a check which can never fail, because it fixes whatever it found and exits 0.
+
 name: phpstan
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phpstan-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  phpstan:
+  analyse:
+    name: PHPStan · Pint · Rector
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: '8.4'
-          extensions: dom, curl, libxml, mbstring, zip, intl
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl
           coverage: none
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-interaction
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer update --prefer-stable --no-interaction --no-progress
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --error-format=github
+      - name: Validate the manifest
+        run: composer validate --strict
+
+      - name: PHPStan
+        run: composer phpstan
+
+      - name: Pint
+        run: composer pint
+
+      - name: Rector
+        run: composer rector

@@ -1,66 +1,72 @@
-name: Bug Report
-description: Report an Issue or Bug with the Package
+name: Bug report
+description: Something in laranail/email behaves differently from what it documents
 title: "[Bug]: "
 labels: ["bug"]
+
 body:
-    - type: markdown
-      attributes:
-          value: |
-              We're sorry to hear you have a problem. Can you help us solve it by providing the following details.
-    - type: textarea
-      id: what-happened
-      attributes:
-          label: What happened?
-          description: What did you expect to happen?
-          placeholder: I cannot currently do X thing because when I do, it breaks X thing.
-      validations:
-          required: true
-    - type: textarea
-      id: how-to-reproduce
-      attributes:
-          label: How to reproduce the bug
-          description: How did this occur, please add any config values used and provide a set of reliable steps if possible.
-          placeholder: When I do X I see Y.
-      validations:
-          required: true
-    - type: input
-      id: package-version
-      attributes:
-          label: Package Version
-          description: What version of our Package are you running? Please be as specific as possible
-          placeholder: 0.1.0
-      validations:
-          required: true
-    - type: input
-      id: php-version
-      attributes:
-          label: PHP Version
-          description: What version of PHP are you running? Please be as specific as possible
-          placeholder: 8.3.2
-      validations:
-          required: true
-    - type: input
-      id: laravel-version
-      attributes:
-        label: Laravel Version
-        description: What version of Laravel are you running? Please be as specific as possible
-        placeholder: 13.1.0
-      validations:
-        required: true
-    - type: dropdown
-      id: operating-systems
-      attributes:
-        label: Which operating systems does this happen with?
-        description: You may select more than one.
-        multiple: true
-        options:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting it. The most useful thing you can give us is the **input** — the exact
+        string that went in — because an address bug is almost always about one particular string, and a description of it is
+        rarely enough to reproduce.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what you got instead.
+      placeholder: |
+        `Mail::of('a+b@example.com')->canonical()` returns ... but I expected ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce it
+      description: The smallest code that shows it, plus any non-default config.
+      render: php
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      description: The exact version, or the commit if you are on a dev checkout.
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: 8.4.3
+    validations:
+      required: true
+
+  - type: input
+    id: laravel-version
+    attributes:
+      label: Laravel version
+      placeholder: 13.25.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating-systems
+    attributes:
+      label: Which operating systems does it happen on?
+      multiple: true
+      options:
         - macOS
         - Windows
         - Linux
-    - type: textarea
-      id: notes
-      attributes:
-          label: Notes
-          description: Use this field to provide any other notes that you feel might be relevant to the issue.
-      validations:
-          required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Stack trace, related issues, or what you have already ruled out.

@@ -1,0 +1,102 @@
+# Every tag gets a real description, sourced from CHANGELOG.md. A release whose body is
+# auto-generated notes or a "see CHANGELOG" stub is incomplete — that is the org rule, and this
+# workflow is how it stops depending on somebody remembering.
+#
+# ## The moving tag
+#
+# While the package is pre-1.0 it carries a single `v0.1.0` tag that is MOVED rather than added to,
+# so this workflow fires on a force-pushed tag as well as a new one. That is deliberate:
+# `softprops/action-gh-release` updates an existing release in place, so the notes are refreshed from
+# the CHANGELOG each time the tag moves rather than going stale against it.
+#
+# It also means the extraction has to cope with there being no `## [0.1.0]` section at all — the
+# changes are still under `## [Unreleased]`, because they have not been cut into a version yet. It
+# falls through to that rather than emitting the stub the rule exists to forbid.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo
+          coverage: none
+
+      - name: Install runtime dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: email.cdx.json
+          upload-artifact: false
+          upload-release-assets: false # the release step below attaches it (avoids a duplicate asset)
+
+      - name: Extract this version's CHANGELOG section
+        id: changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+
+          # The trailing `grep -v` drops Keep-a-Changelog link definitions — `[Unreleased]: https://…`
+          # sits at the foot of the file with no heading after it, so the section reader keeps
+          # scanning past the prose and into it.
+          section() {
+            awk -v want="$1" '
+              $0 ~ "^## \\[?" want "\\]?" { f=1; next }
+              f && /^## / { exit }
+              f { print }
+            ' CHANGELOG.md | grep -v '^\[.*\]: http'
+          }
+
+          notes=$(section "$version")
+
+          # Pre-1.0 the tag moves and the changes are still under Unreleased, so there is no
+          # version section to find. Use that rather than falling back to a stub.
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            notes=$(section 'Unreleased')
+          fi
+
+          {
+            echo "body<<__CHANGELOG_EOF__"
+            if [ -n "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+              printf '%s\n' "$notes"
+            else
+              echo "See [CHANGELOG.md](https://github.com/laranail/email/blob/main/CHANGELOG.md)."
+            fi
+            echo
+            echo "Full history: [CHANGELOG.md](https://github.com/laranail/email/blob/main/CHANGELOG.md)."
+            echo "__CHANGELOG_EOF__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.body }}
+          files: email.cdx.json

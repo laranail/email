@@ -1,13 +1,33 @@
+# `prefer-lowest` is the leg that catches a constraint looser than the code: it resolves the oldest
+# versions composer.json permits, which is what a consumer on a conservative lockfile actually gets.
+#
+# Windows is in the matrix because path handling is the one thing that genuinely differs, and it
+# differs silently — a case-insensitive filesystem resolves a mis-cased namespace that Linux does not,
+# and a directory separator baked into a string works on one and not the other. It also has to be
+# told about `ext-fileinfo` explicitly, which is what broke this workflow: the Linux runner enables it
+# by default and the Windows one does not, so `league/flysystem-local` (via laravel/framework) failed
+# to resolve on four of the eight legs while the other four went green.
+
 name: run-tests
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: run-tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    name: PHP ${{ matrix.php }} · ${{ matrix.os }} · ${{ matrix.stability }}
     runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -15,19 +35,28 @@ jobs:
         php: ['8.4', '8.5']
         stability: [prefer-lowest, prefer-stable]
 
-    name: PHP ${{ matrix.php }} - ${{ matrix.os }} - ${{ matrix.stability }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, intl
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl
           coverage: none
 
-      - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+      - name: Cache Composer files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ matrix.os }}-${{ matrix.php }}-${{ matrix.stability }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.os }}-${{ matrix.php }}-
 
-      - name: Run tests
-        run: vendor/bin/pest
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+
+      - name: Run the suite
+        run: composer test

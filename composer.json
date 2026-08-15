@@ -71,10 +71,20 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/pest",
-        "phpstan": "vendor/bin/phpstan analyse",
-        "format": "vendor/bin/pint",
-        "rector": "vendor/bin/rector process"
+        "test": "vendor/bin/pest --colors=always",
+        "test-coverage": "@test --coverage --min=90",
+        "lint": [
+            "@pint",
+            "@phpstan",
+            "@rector"
+        ],
+        "pint": "vendor/bin/pint --test",
+        "pint-fix": "vendor/bin/pint",
+        "phpstan": "vendor/bin/phpstan analyse --no-progress",
+        "analyse": "@phpstan",
+        "rector": "vendor/bin/rector process --dry-run",
+        "rector-fix": "vendor/bin/rector process",
+        "format": "@pint-fix"
     },
     "config": {
         "sort-packages": true,
