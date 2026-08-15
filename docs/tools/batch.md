@@ -23,6 +23,7 @@ against the other.
 
 In this section: [Two questions](#two-questions-not-one) · [Entries](#entries) ·
 [The report](#the-report) · [Reachability](#reachability-is-per-domain) ·
+[Three sizes of problem](#three-sizes-of-problem) · [On the queue](#auditing-a-table-on-the-queue) ·
 [Streaming](#streaming-a-list-larger-than-memory) · [Method reference](#method-reference)
 
 ## Two questions, not one
@@ -115,6 +116,77 @@ Two limits worth stating plainly:
 - A negative may be a transient outage. See [Resolver](resolver.md) for the asymmetric TTLs that
   exist because of it.
 
+## Three sizes of problem
+
+| | Holds | Gives you |
+|---|---|---|
+| `Mail::audit()` | every entry, O(n) | the report, per-row filtering **and** per-domain reachability |
+| `Mail::report()` | tallies only, bounded | the report |
+| `Mail::each()` | nothing | one entry at a time, no report |
+
+`report()` is the one to reach for when the input is a database column or a file rather than a form
+submission. It is the same verdict `audit()` produces — the two share one definition, so they cannot
+drift — computed without keeping the rows:
+
+```php
+$report = Mail::report($millionRowIterator);
+
+$report->summary();          // ['total' => 1_000_000, 'usable' => 943_112, …]
+$report->domains();          // ['gmail.com' => 402_118, …]
+$report->duplicateCounts();  // ['alice@example.com' => 412, …]
+```
+
+**No reachability, and it says so.** Grouping MX lookups per domain needs the whole list in hand,
+which is exactly what this method avoids, so `checked_reachability` is `false`. That is declared
+rather than left to be inferred from an absent `unreachable` count — the absence means "nobody
+looked", not "nothing was unreachable", and a report that cannot tell a reader which is misleading.
+
+> **The duplicate row indexes are a sample, capped at 100 per address.** The counts are exact; what
+> is bounded is how many example rows you can be pointed at. That cap is what makes the memory claim
+> true — an earlier version kept every index, which is O(rows) wearing an O(distinct) description.
+
+Two reports can be folded together with `merge()`, for chunks audited on separate workers. It
+recounts duplicates rather than adding them, because an address seen in two chunks is a duplicate
+that neither chunk knew about.
+
+## Auditing a table on the queue
+
+```php
+use Simtabi\Laranail\Email\Jobs\AuditEmailColumn;
+
+AuditEmailColumn::dispatch(User::class, 'email', key: 'users');
+
+// …later
+Cache::get('laranail.email.audit.users');            // the report
+Cache::get('laranail.email.audit.users.progress');   // rows read so far
+```
+
+| Argument | | |
+|---|---|---|
+| `model` | required | An Eloquent model class |
+| `column` | required | The column holding the addresses |
+| `keepSubaddress` | `false` | Treat `alice+news@` and `alice@` as different mailboxes |
+| `key` | `'default'` | Cache key suffix |
+| `chunk` | `1000` | Rows per query |
+| `scope` | `null` | A named query scope, applied without arguments |
+| `ttl` | `86400` | Seconds to keep the report; `null` keeps it until evicted |
+
+**It takes a model class rather than the rows**, because a queue payload has to serialise and a
+generator does not — nor does a closure, a cursor or a file handle. Passing the rows in would mean
+serialising a million values into the payload before a worker saw one, which is the problem the job
+exists to solve.
+
+The column is read with `lazyById()`, so it reaches the report as **one** sequence. Auditing chunk by
+chunk and merging afterwards would restart the row indexes at zero per chunk, and the duplicate
+groups would then report rows as duplicates of each other that are nothing of the kind.
+
+> Keyset paging rather than `offset`, because an audit whose caller is also writing to the table it
+> reads shifts rows underneath an offset-paged query and silently skips some.
+
+A scope that does not return a builder throws rather than being ignored: silently dropping it would
+audit the whole table while appearing to audit a subset, which is the worst kind of wrong because the
+report still looks plausible.
+
 ## Streaming a list larger than memory
 
 ```php
@@ -143,7 +215,8 @@ EmailAddress::unique($column);   // ['alice@example.com', 'bob@example.com']
 
 | | |
 |---|---|
-| `Mail::audit(iterable, bool $checkReachability, bool $keepSubaddress)` | The whole verdict |
+| `Mail::audit(iterable, bool $checkReachability, bool $keepSubaddress)` | The whole verdict, entries kept |
+| `Mail::report(iterable, bool $keepSubaddress)` | The verdict only, nothing kept |
 | `Mail::each(iterable, bool $keepSubaddress)` | The same pass, streamed |
 | `Mail::unique(iterable, bool $keepSubaddress)` | Just the distinct mailboxes |
 | `Mail::batch()` | The `EmailBatch` service, for injection |
@@ -155,6 +228,7 @@ On the audit:
 | `entries()` · `usable()` · `unusable()` | The rows |
 | `distinct()` · `duplicates()` · `duplicateGroups()` · `unique()` | De-duplication |
 | `summary()` · `problems()` · `domains()` | The report |
+| `duplicateCounts()` | Exact duplicate totals (the groups are a sample) |
 | `report()` · `toArray()` · `jsonSerialize()` | Output |
 | `count()` · `isEmpty()` · iteration | It is `Countable` and `IteratorAggregate` |
 

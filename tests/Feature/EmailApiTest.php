@@ -106,6 +106,34 @@ describe('with the API enabled', function (): void {
             ->assertJsonValidationErrors('emails');
     });
 
+    it('finds addresses in free text with their offsets', function (): void {
+        $this->postJson('api/laranail/email/scan', [
+            'text' => 'Write to alice@example.com or bob@example.org.',
+        ])
+            ->assertOk()
+            ->assertJsonPath('meta.count', 2)
+            ->assertJsonPath('data.0.address', 'alice@example.com')
+            ->assertJsonPath('data.0.offset', 9)
+            // The full stop is sentence punctuation, not part of the domain.
+            ->assertJsonPath('data.1.address', 'bob@example.org');
+    });
+
+    it('rejects a leniency it does not know', function (): void {
+        $this->postJson('api/laranail/email/scan', ['text' => 'hello', 'leniency' => 'WHATEVER'])
+            ->assertJsonValidationErrors('leniency');
+    });
+
+    it('refuses to escalate a scan to DNS when reachability is switched off', function (): void {
+        // The request asked for the network and the application said no, so it is answered at the
+        // rung below rather than errored — the caller still gets addresses, just a weaker claim.
+        config()->set('laranail.email.api.allow_reachability', false);
+
+        $this->postJson('api/laranail/email/scan', [
+            'text' => 'alice@example.com',
+            'leniency' => 'DELIVERABLE',
+        ])->assertOk()->assertJsonPath('meta.count', 1);
+    });
+
     it('rejects an empty or malformed payload', function (): void {
         $this->postJson('api/laranail/email/batch', ['emails' => []])->assertStatus(422);
         $this->postJson('api/laranail/email/batch', ['emails' => 'not an array'])->assertStatus(422);

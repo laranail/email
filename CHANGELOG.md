@@ -9,6 +9,25 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `Mail::find()`, `replaceIn()` and `redact()` — a scanner over free text, with byte offsets so a
+  caller redacts the right occurrence rather than the first one. It is honest about what it can
+  claim: `laranail/phone`'s scanner is backed by the world's numbering plans and can reject a
+  candidate on those grounds, and **there is no equivalent authority for email** — so what is here is
+  a narrow pattern, every candidate re-parsed through the same `Email::parse()` the rest of the
+  package uses, and a stated leniency ladder. `redact()` keeps the domain, because knowing a
+  complaint came from a `gov.uk` address is often the reason the log is being read.
+- `ScanLeniency` — `POSSIBLE`, `VALID` (default) and `DELIVERABLE`. `VALID` is the default because
+  `ssh deploy@web-01` is a command rather than a contact; `redact()` defaults to `POSSIBLE` instead,
+  because when redacting a false positive costs a blacked-out word and a false negative leaks a real
+  address. `DELIVERABLE` resolves once per distinct domain per scan.
+- A `scan` endpoint on the HTTP API, and `scanning.leniency` / `scanning.limit` in config.
+- `Mail::report()` — the verdict on a list of any size, without holding it. `audit()` keeps every
+  entry at O(n) and `each()` keeps nothing and gives up the report; this keeps only the tallies and a
+  bounded sample of row indexes. No reachability, and it says so in the summary rather than leaving
+  an absent `unreachable` count to be misread as "nothing was unreachable".
+- `AuditEmailColumn`, a queued job that audits a whole table column in chunks and caches the report
+  and its progress.
+- `EmailAuditReport::duplicateCounts()`, exact where `duplicateGroups()` is a capped sample.
 - `Mail::audit()` — judges a whole list in one pass, and answers two questions from it: what each
   address is, and what is wrong with the list. `domains()` is the first thing worth looking at on an
   import: one domain holding most of the rows is either a corporate export or a leak, and the two
@@ -67,6 +86,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   answering, and the person who edited the file had no way to tell. The provider now uses
   `laranail/package-tools`, which publishes the namespaced key to `config/laranail/email.php` *and*
   merges that file back over the defaults at boot, because Laravel does not auto-load nested config.
+- Four of the eight CI legs had been failing since the repo was created, and all four were Windows:
+  setup-php's extension list omitted `ext-fileinfo`, which the Linux runner enables by default and
+  the Windows one does not, so `league/flysystem-local` could not resolve and composer failed before
+  a test ran. The green Linux legs made it look like a flake.
+- `composer rector` called `process`, which *applies* changes — on CI a check that cannot fail,
+  because it fixes whatever it finds and exits 0. It is `--dry-run` now, and the script set matches
+  `laranail/phone`'s.
+- The feature-request issue template was a copy of `laranail/validation`'s, asking for "a rule,
+  builder method, or capability for laranail/validation" and linking that repo's discussions.
 - `illuminate/cache` added to `require`. `CachedDnsResolver` has always used the `Cache` facade, so
   the dependency was real and merely undeclared — it worked in an application and would have failed a
   resolve of the package on its own.

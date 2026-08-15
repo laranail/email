@@ -10,8 +10,12 @@ use Simtabi\Laranail\Email\Email;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailBuilder;
 use Simtabi\Laranail\Email\EmailManager;
+use Simtabi\Laranail\Email\EmailScanner;
+use Simtabi\Laranail\Email\Enums\ScanLeniency;
 use Simtabi\Laranail\Email\Support\EmailAudit;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
+use Simtabi\Laranail\Email\Support\EmailAuditReport;
+use Simtabi\Laranail\Email\Support\EmailMatch;
 use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
@@ -34,7 +38,12 @@ use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
  * @method static list<string> unique(iterable<mixed, string|null> $addresses, bool $keepSubaddress = false)
  * @method static EmailAudit audit(iterable<mixed, string|null> $addresses, bool $checkReachability = false, bool $keepSubaddress = false)
  * @method static Generator<int, EmailAuditEntry> each(iterable<mixed, string|null> $addresses, bool $keepSubaddress = false)
+ * @method static EmailAuditReport report(iterable<mixed, string|null> $addresses, bool $keepSubaddress = false)
  * @method static EmailBatch batch()
+ * @method static list<EmailMatch> find(?string $text, ?ScanLeniency $leniency = null)
+ * @method static string|null replaceIn(?string $text, callable $replace, ?ScanLeniency $leniency = null)
+ * @method static string|null redact(?string $text, string $maskChar = '•', ?ScanLeniency $leniency = null)
+ * @method static EmailScanner scanner()
  * @method static DisposableDomainList disposableList()
  * @method static RoleAccountList roleAccountList()
  * @method static DnsResolver dns()

@@ -8,6 +8,8 @@ use Illuminate\Contracts\Config\Repository;
 use Simtabi\Laranail\Email\Commands\RefreshListsCommand;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailManager;
+use Simtabi\Laranail\Email\EmailScanner;
+use Simtabi\Laranail\Email\Enums\ScanLeniency;
 use Simtabi\Laranail\Email\Http\ApiRoutes;
 use Simtabi\Laranail\Email\Http\EmailPresenter;
 use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
@@ -56,6 +58,13 @@ class EmailServiceProvider extends PackageServiceProvider
             dns: $this->app->make(DnsResolver::class),
         ));
 
+        $this->app->singleton(EmailScanner::class, fn (): EmailScanner => new EmailScanner(
+            dns: $this->app->make(DnsResolver::class),
+            leniency: ScanLeniency::tryFrom($this->string(config('laranail.email.scanning.leniency')) ?? 'VALID')
+                ?? ScanLeniency::Valid,
+            limit: $this->int(config('laranail.email.scanning.limit')) ?? PHP_INT_MAX,
+        ));
+
         // Bound even when the API is off: the wire format is useful to an application writing its
         // own controller, and it costs nothing until something resolves it.
         $this->app->singleton(EmailPresenter::class, fn (): EmailPresenter => new EmailPresenter);
@@ -67,7 +76,25 @@ class EmailServiceProvider extends PackageServiceProvider
             roleAccounts: $this->app->make(RoleAccountList::class),
             dns: $this->app->make(DnsResolver::class),
             batch: $this->app->make(EmailBatch::class),
+            scanner: $this->app->make(EmailScanner::class),
         ));
+    }
+
+    /**
+     * A config value as a string, or null.
+     *
+     * `config()` returns `mixed` and a cast would paper over that rather than answer it: a leniency
+     * set to an array or a stray `true` in `.env` should fall back to the default, not become the
+     * string `"1"` and silently widen what the scanner accepts.
+     */
+    private function string(mixed $value): ?string
+    {
+        return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    private function int(mixed $value): ?int
+    {
+        return is_numeric($value) ? (int) $value : null;
     }
 
     public function bootingPackage(): void

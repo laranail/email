@@ -53,6 +53,13 @@ $audit->problems();   // ['role_account' => 180, 'disposable' => 74]
 $audit->distinct();   // the rows to keep
 ```
 
+And in free text, which is where addresses turn up when nobody put them in a field:
+
+```php
+EmailAddress::find($supportTicket);    // matches, with byte offsets
+EmailAddress::redact($supportTicket);  // 'contact a••••@example.com now'
+```
+
 Reachability over a batch is resolved **per domain**, so ten thousand addresses at one provider cost
 one MX lookup rather than ten thousand.
 
@@ -95,7 +102,8 @@ Full documentation is at
 ### Reference
 
 - [Fluent builder](docs/tools/fluent-builder.md) — `Mail::of(...)`, canonicalisation, and all the problems at once
-- [Batch and audit](docs/tools/batch.md) — judging a whole list, and why reachability is per domain
+- [Batch and audit](docs/tools/batch.md) — judging a whole list, per-domain reachability, and the queued job
+- [Scanner](docs/tools/scanner.md) — finding addresses in free text, and what a match can honestly claim
 - [HTTP API](docs/tools/api.md) — three endpoints, off by default, and how to turn them on safely
 - [Lists](docs/tools/lists.md) — disposable domains, role accounts, refreshing, and the fallback
 - [Resolver](docs/tools/resolver.md) — caching, TTL asymmetry, and what a failed lookup means
@@ -104,6 +112,8 @@ Full documentation is at
 
 - [Deduplicate signups](docs/recipes/deduplicate-signups.md) — one person, four addresses, one mailbox
 - [Audit a mailing list](docs/recipes/audit-a-mailing-list.md) — judge a list before you send to it
+- [Audit a table in the background](docs/recipes/audit-a-table-in-the-background.md) — a million rows on the queue
+- [Redact a support ticket](docs/recipes/redact-a-support-ticket.md) — take the addresses out of text you are about to share
 
 ### Project
 

@@ -39,6 +39,7 @@ final class ApiRoutes
                 Route::post('/analyze', [EmailApiController::class, 'analyze'])->name('analyze');
                 Route::post('/batch', [EmailApiController::class, 'batch'])->name('batch');
                 Route::post('/audit', [EmailApiController::class, 'audit'])->name('audit');
+                Route::post('/scan', [EmailApiController::class, 'scan'])->name('scan');
             });
     }
 

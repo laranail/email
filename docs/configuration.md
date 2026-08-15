@@ -1,6 +1,6 @@
 # Configuration
 
-Four blocks. Every default is safe to leave alone except the HTTP API, which is off and should stay
+Five blocks. Every default is safe to leave alone except the HTTP API, which is off and should stay
 off until someone has decided how it will be authenticated.
 
 Publish with `php artisan vendor:publish --tag=laranail::email-config`, which writes
@@ -25,12 +25,14 @@ Publish with `php artisan vendor:publish --tag=laranail::email-config`, which wr
 | `dns.store` | `null` | Which cache store holds MX answers; null uses the default |
 | `dns.positive_ttl` | `86400` | How long a resolving domain stays cached |
 | `dns.negative_ttl` | `300` | How long a failing one does — deliberately shorter |
+| `scanning.leniency` | `'VALID'` | How readily free-text scanning accepts a candidate |
+| `scanning.limit` | `PHP_INT_MAX` | A ceiling on matches per scan |
 | `api.enabled` | `false` | **No routes exist until this is true** |
 | `api.prefix` | `api/laranail/email` | Where the endpoints mount |
 | `api.middleware` | `['api']` | Not authentication — see below |
 | `api.throttle` | `'60,1'` | Appended unless the middleware already throttles; null opts out |
 | `api.max_batch` | `1000` | Enforced with a 422, never a truncation |
-| `api.allow_reachability` | `true` | Whether a request may ask for MX lookups |
+| `api.allow_reachability` | `true` | Whether a request may ask for MX lookups, including a `DELIVERABLE` scan |
 
 ## `lists`
 
@@ -73,6 +75,23 @@ that for a day turns a blip into a day of rejected signups — so it is five min
 
 > On the `array` cache driver, a TTL means "for this request". That is the driver's nature rather
 > than this setting's, but it is worth knowing before wondering why every request re-queries.
+
+## `scanning`
+
+Defaults for `Mail::find()`, which locates addresses inside prose rather than parsing a field.
+
+```php
+'scanning' => [
+    'leniency' => env('LARANAIL_EMAIL_SCAN_LENIENCY', 'VALID'),
+    'limit' => (int) env('LARANAIL_EMAIL_SCAN_LIMIT', PHP_INT_MAX),
+],
+```
+
+`VALID` is the default: the domain must have a dot and a plausible top-level label, which is what
+stops `ssh deploy@web-01` in a pasted command from being read as a contact. `POSSIBLE` finds anything
+address-shaped and is right for redaction, where a false positive costs a blacked-out word and a
+false negative leaks a real address. `DELIVERABLE` additionally requires an MX record and is the only
+rung that touches the network. See [Scanner](tools/scanner.md).
 
 ## `api`
 

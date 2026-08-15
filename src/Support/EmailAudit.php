@@ -210,16 +210,22 @@ final readonly class EmailAudit implements Countable, IteratorAggregate, JsonSer
     }
 
     /**
+     * The fixed-size verdict.
+     *
+     * Delegates to {@see EmailAuditReport} rather than computing its own, so this path and the
+     * streaming one cannot drift into disagreeing about what a summary means.
+     *
      * @return array{summary: array<string, bool|int>, domains: array<string, int>, problems: array<string, int>, duplicates: array<string, list<int>>}
      */
     public function report(): array
     {
-        return [
-            'summary' => $this->summary(),
-            'domains' => $this->domains(),
-            'problems' => $this->problems(),
-            'duplicates' => $this->duplicateGroups(),
-        ];
+        $report = new EmailAuditReport($this->checkedReachability);
+
+        foreach ($this->entries as $entry) {
+            $report->add($entry);
+        }
+
+        return $report->toArray();
     }
 
     /**

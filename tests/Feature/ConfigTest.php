@@ -50,7 +50,7 @@ it('registers API routes to controller actions, not closures, so route:cache wor
         static fn ($route): bool => str_starts_with((string) $route->getName(), ApiRoutes::NAME_PREFIX),
     );
 
-    expect($routes)->toHaveCount(3);
+    expect($routes)->toHaveCount(4);
 
     foreach ($routes as $route) {
         expect($route->getActionName())->not->toBe('Closure');

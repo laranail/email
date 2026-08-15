@@ -1,6 +1,6 @@
 # HTTP API
 
-Three endpoints — analyse, batch, audit — for the callers that are not PHP. **Off by default.**
+Four endpoints — analyse, batch, audit, scan — for the callers that are not PHP. **Off by default.**
 
 ```php
 // config/laranail/email.php
@@ -111,6 +111,28 @@ question about the list:
 The unusable rows keep their `index` even though the rest of the payload is gone, because a count
 alone is not something anyone can act on.
 
+### `POST {prefix}/scan`
+
+Free text in, the addresses it contains out, with byte offsets so a caller can highlight or redact
+the right occurrence rather than the first one.
+
+```json
+{ "text": "Write to alice@example.com.", "leniency": "VALID" }
+```
+
+```json
+{
+  "data": [ { "raw": "alice@example.com", "offset": 9, "end": 26,
+              "address": "alice@example.com", "canonical": "alice@example.com",
+              "domain": "example.com" } ],
+  "meta": { "count": 1 }
+}
+```
+
+`leniency` is one of `POSSIBLE`, `VALID`, `DELIVERABLE` — see [Scanner](scanner.md) for which to
+pick. A `DELIVERABLE` request is answered at `VALID` when `allow_reachability` is off: the caller
+still gets addresses, just a weaker claim, which beats erroring on a request that was reasonable.
+
 ## Errors
 
 Validation failures are Laravel's standard 422:
@@ -129,12 +151,12 @@ entirely. `Validator::make()` throws the same exception and Laravel renders the 
 `max_batch` is **enforced, not applied**. A caller that sent 5,000 and got 1,000 back has a bug it
 cannot see, so over-sized batches are a 422 naming the field.
 
-Per-value cap: 320 characters, the RFC 5321 maximum for an address.
+Per-value caps: 320 characters for an address, the RFC 5321 maximum; 100,000 for scanned text.
 
 ## Route names
 
-Every route is named `laranail.email.api.{analyze,batch,audit}`, so `route()` resolves them and the
-prefix is written down in exactly one place.
+Every route is named `laranail.email.api.{analyze,batch,audit,scan}`, so `route()` resolves them and
+the prefix is written down in exactly one place.
 
 ```php
 route('laranail.email.api.audit');

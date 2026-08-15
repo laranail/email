@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Email;
 use Generator;
 use Simtabi\Laranail\Email\Support\EmailAudit;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
+use Simtabi\Laranail\Email\Support\EmailAuditReport;
 use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
@@ -142,6 +143,31 @@ final readonly class EmailBatch
 
             $index++;
         }
+    }
+
+    /**
+     * The report, without holding the entries.
+     *
+     * The third option, and usually the right one for anything large: `audit()` holds every entry at
+     * O(n), `each()` holds nothing and gives up the report, and this holds only the tallies and the
+     * first index per address — **O(distinct)**.
+     *
+     * No reachability, for the same reason `each()` has none: grouping MX lookups per domain means
+     * seeing the whole list first, which is exactly what this method exists to avoid. The summary
+     * says `checked_reachability: false` rather than leaving it to be inferred from an absent
+     * `unreachable` count.
+     *
+     * @param  iterable<mixed, string|null>  $inputs
+     */
+    public function report(iterable $inputs, bool $keepSubaddress = false): EmailAuditReport
+    {
+        $report = new EmailAuditReport;
+
+        foreach ($this->each($inputs, $keepSubaddress) as $entry) {
+            $report->add($entry);
+        }
+
+        return $report;
     }
 
     /**

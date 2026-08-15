@@ -64,6 +64,34 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Scanning free text
+    |--------------------------------------------------------------------------
+    |
+    | Defaults for `Mail::find()`, which locates addresses inside prose rather
+    | than parsing a field.
+    |
+    | `leniency` is the trade between missing addresses and inventing them, and
+    | the right point depends entirely on the text. VALID is the default: the
+    | domain must have a dot and a plausible top-level label, which is what stops
+    | `ssh deploy@web-01` in a pasted command from being read as a contact.
+    | POSSIBLE finds anything address-shaped and is the right choice for
+    | redaction, where a false positive costs a blacked-out word and a false
+    | negative leaks a real address. DELIVERABLE additionally requires an MX
+    | record, and is the only level that touches the network.
+    |
+    | One of: POSSIBLE, VALID, DELIVERABLE.
+    |
+    */
+    'scanning' => [
+        'leniency' => env('LARANAIL_EMAIL_SCAN_LENIENCY', 'VALID'),
+
+        // A ceiling on matches per scan. Guards against a pathological input
+        // producing an unbounded result set; PHP_INT_MAX means no ceiling.
+        'limit' => (int) env('LARANAIL_EMAIL_SCAN_LIMIT', PHP_INT_MAX),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | HTTP API
     |--------------------------------------------------------------------------
     |

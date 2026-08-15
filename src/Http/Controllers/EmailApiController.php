@@ -7,11 +7,15 @@ namespace Simtabi\Laranail\Email\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailManager;
+use Simtabi\Laranail\Email\EmailScanner;
+use Simtabi\Laranail\Email\Enums\ScanLeniency;
 use Simtabi\Laranail\Email\Http\EmailPresenter;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
+use Simtabi\Laranail\Email\Support\EmailMatch;
 
 /**
  * The package over HTTP, for the callers that are not PHP.
@@ -36,6 +40,7 @@ final readonly class EmailApiController
     public function __construct(
         private EmailManager $manager,
         private EmailBatch $batch,
+        private EmailScanner $scanner,
         private EmailPresenter $presenter,
     ) {}
 
@@ -105,6 +110,36 @@ final readonly class EmailApiController
                     $audit->unusable(),
                 ),
             ],
+        ]);
+    }
+
+    /**
+     * Free text in, the addresses it contains out.
+     *
+     * `leniency` is the only interesting parameter. `DELIVERABLE` performs MX lookups — once per
+     * distinct domain — so it is refused when `allow_reachability` is off, exactly as the per-address
+     * check is.
+     */
+    public function scan(Request $request): JsonResponse
+    {
+        $input = $this->validate($request, [
+            'text' => ['required', 'string', 'max:100000'],
+            'leniency' => ['nullable', Rule::in(array_column(ScanLeniency::cases(), 'value'))],
+        ]);
+
+        $leniency = is_string($input['leniency'] ?? null)
+            ? ScanLeniency::tryFrom($input['leniency'])
+            : null;
+
+        if ($leniency?->requiresDns() === true && config('laranail.email.api.allow_reachability', true) !== true) {
+            $leniency = ScanLeniency::Valid;
+        }
+
+        $matches = $this->scanner->scan(is_string($input['text']) ? $input['text'] : null, $leniency);
+
+        return new JsonResponse([
+            'data' => array_map(static fn (EmailMatch $match): array => $match->toArray(), $matches),
+            'meta' => ['count' => count($matches)],
         ]);
     }
 
