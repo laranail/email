@@ -10,6 +10,8 @@ yarn-error.log
 
 # Caches
 .cache
+.phpunit.cache/
+.phpunit.result.cache
 /build
 
 # IDE Helper

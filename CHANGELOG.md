@@ -9,6 +9,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `Mail::of()` — a fluent builder over the value object, shaped deliberately like
+  `laranail/phone`'s so a developer who has learned one knows the other. `canonical()` names the
+  deduplication policy rather than leaving it implicit, `keepSubaddress()` opts out of it, and
+  `problems()` returns everything wrong with an address at once instead of one failure per round
+  trip. The MX check inside it stays off by default — it is the only thing here that leaves the
+  process.
+- `Mail::unique()`, which deduplicates an iterable of addresses by canonical form. What an import
+  actually needs; `array_unique()` keeps all four spellings of one mailbox.
 - `Email`, an address value object. Splits on the **last** `@` so a quoted local part like
   `"a@b"@example.com` parses correctly, lowercases the domain but **not** the local part
   (RFC 5321 §2.4 makes local parts case-sensitive; ignoring case is a provider policy, not the

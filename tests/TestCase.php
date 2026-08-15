@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Email\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use Simtabi\Laranail\Email\EmailServiceProvider;
+use Simtabi\Laranail\Email\Providers\EmailServiceProvider;
 use Simtabi\Laranail\Validation\ValidationServiceProvider;
 
 abstract class TestCase extends Orchestra

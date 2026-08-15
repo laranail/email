@@ -5,7 +5,7 @@
 [![Static analysis](https://github.com/laranail/email/actions/workflows/phpstan.yml/badge.svg)](https://github.com/laranail/email/actions/workflows/phpstan.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> Email utilities for Laravel — an address value object that parses correctly, maintained disposable and role-account lists, and a cached deliverability resolver.
+> Email utilities for Laravel — a fluent API over an address value object that parses correctly, with canonicalisation for deduplication, maintained disposable and role-account lists, and a cached deliverability resolver.
 
 Targets PHP `^8.4.1` on Laravel `^13`.
 
@@ -79,8 +79,13 @@ Full documentation is at
 
 ### Reference
 
+- [Fluent builder](docs/tools/fluent-builder.md) — `Mail::of(...)`, canonicalisation, and all the problems at once
 - [Lists](docs/tools/lists.md) — disposable domains, role accounts, refreshing, and the fallback
 - [Resolver](docs/tools/resolver.md) — caching, TTL asymmetry, and what a failed lookup means
+
+### Recipes
+
+- [Deduplicate signups](docs/recipes/deduplicate-signups.md) — one person, four addresses, one mailbox
 
 ## Stability
 

@@ -82,7 +82,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Simtabi\\Laranail\\Email\\EmailServiceProvider"
+                "Simtabi\\Laranail\\Email\\Providers\\EmailServiceProvider"
             ]
         },
         "branch-alias": {
