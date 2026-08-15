@@ -47,7 +47,7 @@ final readonly class CachedDnsResolver implements DnsResolver
 
     public function hasMailExchanger(string $domain): bool
     {
-        $domain = self::normalise($domain);
+        $domain = $this->normalise($domain);
 
         if ($domain === '') {
             return false;
@@ -57,7 +57,7 @@ final readonly class CachedDnsResolver implements DnsResolver
             return true;
         }
 
-        $store = $this->cache ?? self::defaultStore();
+        $store = $this->cache ?? $this->defaultStore();
         $key = self::CACHE_PREFIX.$domain;
 
         if ($store instanceof Repository) {
@@ -68,17 +68,17 @@ final readonly class CachedDnsResolver implements DnsResolver
             }
         }
 
-        $result = self::lookup($domain);
+        $result = $this->lookup($domain);
 
         // Asymmetric TTLs: a positive is durable, a negative may be an outage.
         $store?->put($key, $result, $result
-            ? $this->positiveTtl ?? self::ttl('positive', 86400)
-            : $this->negativeTtl ?? self::ttl('negative', 300));
+            ? $this->positiveTtl ?? $this->ttl('positive', 86400)
+            : $this->negativeTtl ?? $this->ttl('negative', 300));
 
         return $result;
     }
 
-    private static function lookup(string $domain): bool
+    private function lookup(string $domain): bool
     {
         if (@checkdnsrr($domain, 'MX')) {
             return true;
@@ -95,7 +95,7 @@ final readonly class CachedDnsResolver implements DnsResolver
         return ! @checkdnsrr('a.root-servers.net', 'A');
     }
 
-    private static function normalise(string $domain): string
+    private function normalise(string $domain): string
     {
         $domain = mb_strtolower(trim($domain, ". \t\n\r\0\x0B"));
 
@@ -112,7 +112,7 @@ final readonly class CachedDnsResolver implements DnsResolver
         return is_string($ascii) && $ascii !== '' ? $ascii : $domain;
     }
 
-    private static function defaultStore(): ?Repository
+    private function defaultStore(): ?Repository
     {
         $configured = config('laranail.email.dns.store');
 
@@ -123,7 +123,7 @@ final readonly class CachedDnsResolver implements DnsResolver
         }
     }
 
-    private static function ttl(string $which, int $default): int
+    private function ttl(string $which, int $default): int
     {
         $value = config("laranail.email.dns.{$which}_ttl");
 

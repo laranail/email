@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email;
 
+use Generator;
+use Simtabi\Laranail\Email\Support\EmailAudit;
+use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
@@ -11,9 +14,9 @@ use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
 /**
  * What the `Mail` facade resolves to.
  *
- * A thin front over the three collaborators — the disposable list, the role-account list and the DNS
- * resolver — so that callers have one place to start and {@see Email} stays what it is: a value
- * object that parses and nothing else.
+ * A thin front over four collaborators — the disposable list, the role-account list, the DNS
+ * resolver and the batch pass — so that callers have one place to start and {@see Email} stays what
+ * it is: a value object that parses and nothing else.
  */
 final readonly class EmailManager
 {
@@ -21,6 +24,7 @@ final readonly class EmailManager
         private DisposableDomainList $disposable,
         private RoleAccountList $roleAccounts,
         private DnsResolver $dns,
+        private EmailBatch $batch,
     ) {}
 
     /**
@@ -48,22 +52,52 @@ final readonly class EmailManager
      * `alice@example.com` are one person signing up three times, and a naive `array_unique` keeps
      * all three.
      *
-     * @param  iterable<string|null>  $addresses
+     * @param  iterable<mixed, string|null>  $addresses
      * @return list<string>
      */
-    public function unique(iterable $addresses): array
+    public function unique(iterable $addresses, bool $keepSubaddress = false): array
     {
-        $seen = [];
+        return $this->batch->unique($addresses, $keepSubaddress);
+    }
 
-        foreach ($addresses as $address) {
-            $canonical = $this->of($address)->canonical();
+    // ---------------------------------------------------------------- many at once
 
-            if ($canonical !== null) {
-                $seen[$canonical] = true;
-            }
-        }
+    /**
+     * Judge a whole list in one pass.
+     *
+     * ```php
+     * $audit = Mail::audit($rows, checkReachability: true);
+     *
+     * $audit->summary();     // ['total' => 4200, 'usable' => 3910, 'duplicates' => 61, …]
+     * $audit->problems();    // ['role_account' => 180, 'disposable' => 74, 'unreachable' => 36]
+     * $audit->distinct();    // the rows to keep
+     * ```
+     *
+     * `checkReachability` groups its MX lookups per domain, so ten thousand addresses at one
+     * provider cost one lookup rather than ten thousand.
+     *
+     * @param  iterable<mixed, string|null>  $addresses
+     */
+    public function audit(iterable $addresses, bool $checkReachability = false, bool $keepSubaddress = false): EmailAudit
+    {
+        return $this->batch->audit($addresses, $checkReachability, $keepSubaddress);
+    }
 
-        return array_keys($seen);
+    /**
+     * The same pass, streamed. Nothing is accumulated, so the input may be larger than memory —
+     * at the cost of per-domain reachability, which needs the whole list to group by.
+     *
+     * @param  iterable<mixed, string|null>  $addresses
+     * @return Generator<int, EmailAuditEntry>
+     */
+    public function each(iterable $addresses, bool $keepSubaddress = false): Generator
+    {
+        return $this->batch->each($addresses, $keepSubaddress);
+    }
+
+    public function batch(): EmailBatch
+    {
+        return $this->batch;
     }
 
     public function disposableList(): DisposableDomainList

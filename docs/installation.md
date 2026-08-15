@@ -51,6 +51,18 @@ becomes empty is worse than no list, because the application still believes it i
 php artisan vendor:publish --tag=laranail::email-config
 ```
 
+That writes **`config/laranail/email.php`** — a nested path, which matters: Laravel keys config by
+filename, so a flat `config/laranail-email.php` would load under `laranail-email` and the package,
+which reads `laranail.email.*`, would never see it. The published file is merged back over the
+packaged defaults at boot, so a partially-edited copy still inherits everything it does not mention.
+
+See [Configuration](configuration.md) for what is in it.
+
+## The HTTP API is off
+
+Installing this package adds **no routes**. If you want the analyse / batch / audit endpoints, enable
+them deliberately and authenticate them — see [HTTP API](tools/api.md).
+
 ---
 
 [← Docs index](../README.md#documentation)

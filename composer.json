@@ -1,6 +1,6 @@
 {
     "name": "laranail/email",
-    "description": "Email validation utilities for Laravel \u2014 an address value object, maintained disposable and role-account lists, and a cached deliverability resolver.",
+    "description": "Email validation utilities for Laravel — an address value object, maintained disposable and role-account lists, and a cached deliverability resolver.",
     "keywords": [
         "laravel",
         "email",
@@ -37,13 +37,17 @@
         }
     ],
     "require": {
+        "php": "^8.4.1 || ^8.5",
+        "illuminate/cache": "^13.0",
         "illuminate/console": "^13.0",
         "illuminate/contracts": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/routing": "^13.0",
         "illuminate/support": "^13.0",
+        "illuminate/validation": "^13.0",
         "laranail/console": "^0.1",
         "laranail/package-tools": "^0.1",
-        "laranail/validation": "^0.1",
-        "php": "^8.4.1 || ^8.5"
+        "laranail/validation": "^0.1"
     },
     "require-dev": {
         "larastan/larastan": "^3.9.3",

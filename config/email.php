@@ -62,4 +62,49 @@ return [
         'negative_ttl' => (int) env('LARANAIL_EMAIL_DNS_NEGATIVE_TTL', 300),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP API
+    |--------------------------------------------------------------------------
+    |
+    | Analyse, batch and audit addresses over HTTP, for the callers that are
+    | not PHP: a Node service, a data pipeline, an internal admin tool.
+    |
+    | OFF BY DEFAULT, and turning it on is the whole security decision.
+    |
+    | > `middleware` below is NOT authentication. `api` is Laravel's stock
+    | > group — throttling and route-model binding — and adding these routes
+    | > with it alone publishes an endpoint that will parse anything anyone
+    | > sends it. Put `auth:sanctum`, a token middleware, or an IP allow-list
+    | > in this list before enabling it on anything reachable.
+    |
+    | A `throttle` is appended automatically unless the middleware list already
+    | contains one, so removing the rate limit also takes an explicit act. Set
+    | `throttle` to null to opt out.
+    |
+    */
+    'api' => [
+        'enabled' => env('LARANAIL_EMAIL_API_ENABLED', false),
+
+        // Mounted under this URI prefix; route names are derived from it.
+        'prefix' => env('LARANAIL_EMAIL_API_PREFIX', 'api/laranail/email'),
+
+        // Read the warning above before changing this.
+        'middleware' => ['api'],
+
+        // Laravel's `throttle:{maxAttempts},{decayMinutes}` argument, or null.
+        'throttle' => env('LARANAIL_EMAIL_API_THROTTLE', '60,1'),
+
+        // The most addresses one batch or audit request may carry. Exceeding it
+        // is a 422 naming the field — never a silent truncation, because a
+        // caller that sent 5,000 and got 1,000 back has a bug it cannot see.
+        'max_batch' => (int) env('LARANAIL_EMAIL_API_MAX_BATCH', 1000),
+
+        // Whether a request may ask for MX lookups. This is the only thing here
+        // that leaves the process, so an application behind a strict egress
+        // policy can refuse it outright rather than relying on callers not to
+        // ask.
+        'allow_reachability' => env('LARANAIL_EMAIL_API_ALLOW_REACHABILITY', true),
+    ],
+
 ];

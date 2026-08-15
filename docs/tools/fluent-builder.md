@@ -81,7 +81,11 @@ EmailAddress::unique([
 // ['alice@example.com', 'bob@example.com']
 ```
 
-`unique()` is the operation an import actually needs. `array_unique()` keeps all four.
+`unique()` is the operation an import actually needs. `array_unique()` keeps all four, and so does
+`SELECT DISTINCT`. Pass `keepSubaddress: true` when the tag is meaningful to you.
+
+For a list you want a *verdict* on rather than a deduplicated copy of — counts, the domain breakdown,
+every problem tallied, MX lookups grouped per domain — see [Batch and audit](batch.md).
 
 ## Judgements
 

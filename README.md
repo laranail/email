@@ -5,7 +5,7 @@
 [![Static analysis](https://github.com/laranail/email/actions/workflows/phpstan.yml/badge.svg)](https://github.com/laranail/email/actions/workflows/phpstan.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> Email utilities for Laravel — a fluent API over an address value object that parses correctly, with canonicalisation for deduplication, maintained disposable and role-account lists, and a cached deliverability resolver.
+> Email utilities for Laravel — a fluent API over an address value object that parses correctly, from one address to a whole list: canonicalisation for deduplication, maintained disposable and role-account lists, a cached deliverability resolver, batch auditing and an opt-in HTTP API.
 
 Targets PHP `^8.4.1` on Laravel `^13`.
 
@@ -31,18 +31,30 @@ Schedule::command('laranail::email.refresh-lists')->weekly();
 ## Quick start
 
 ```php
-use Simtabi\Laranail\Email\Email;
+use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 
-$email = Email::parse('Alice+Newsletter@Example.COM');
+$email = EmailAddress::of('Alice+Newsletter@Example.COM');
 
-$email->localPart;   // 'Alice+Newsletter'  — case preserved: local parts are case-sensitive
-$email->domain;      // 'example.com'       — lowercased: domains are not
-$email->mailbox();   // 'alice'
-$email->tag();       // 'Newsletter'
-$email->canonical(); // 'alice@example.com' — one form per mailbox, for deduplication
-$email->isAt('example.com');           // true, and true for any subdomain
-$email->equals('ALICE@example.com');   // true
+$email->localPart();   // 'Alice+Newsletter'  — case preserved: local parts are case-sensitive
+$email->domain();      // 'example.com'       — lowercased: domains are not
+$email->mailbox();     // 'Alice'
+$email->tag();         // 'Newsletter'
+$email->canonical();   // 'alice@example.com' — one form per mailbox, for deduplication
+$email->problems();    // everything wrong with it, at once
 ```
+
+And for a list, which is how the job usually arrives:
+
+```php
+$audit = EmailAddress::audit($csvColumn, checkReachability: true);
+
+$audit->summary();    // ['total' => 4200, 'usable' => 3910, 'duplicates' => 61, …]
+$audit->problems();   // ['role_account' => 180, 'disposable' => 74]
+$audit->distinct();   // the rows to keep
+```
+
+Reachability over a batch is resolved **per domain**, so ten thousand addresses at one provider cost
+one MX lookup rather than ten thousand.
 
 The validation rules are unchanged and come from `laranail/validation`:
 
@@ -75,17 +87,27 @@ Full documentation is at
 ### Guides
 
 - [Installation](docs/installation.md) — install, publish, and schedule the refresh
+- [Getting started](docs/getting-started.md) — parse, judge and deduplicate, end to end
+- [Configuration](docs/configuration.md) — four blocks, and the one that is a security decision
 - [Architecture](docs/architecture.md) — why the rules live in another package, and the binding asymmetry
+- [Release](docs/release.md) — versioning, tagging, and moving in step with `laranail/validation`
 
 ### Reference
 
 - [Fluent builder](docs/tools/fluent-builder.md) — `Mail::of(...)`, canonicalisation, and all the problems at once
+- [Batch and audit](docs/tools/batch.md) — judging a whole list, and why reachability is per domain
+- [HTTP API](docs/tools/api.md) — three endpoints, off by default, and how to turn them on safely
 - [Lists](docs/tools/lists.md) — disposable domains, role accounts, refreshing, and the fallback
 - [Resolver](docs/tools/resolver.md) — caching, TTL asymmetry, and what a failed lookup means
 
 ### Recipes
 
 - [Deduplicate signups](docs/recipes/deduplicate-signups.md) — one person, four addresses, one mailbox
+- [Audit a mailing list](docs/recipes/audit-a-mailing-list.md) — judge a list before you send to it
+
+### Project
+
+- [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md) · [Credits](CREDITS.md)
 
 ## Stability
 

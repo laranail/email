@@ -61,7 +61,7 @@ final class RefreshListsCommand extends Command
             return self::FAILURE;
         }
 
-        $domains = self::parse($response->body());
+        $domains = $this->parse($response->body());
 
         // A successful response can still be a truncated file, a rate-limit
         // page, or an HTML error served with a 200. Writing that over a
@@ -116,7 +116,7 @@ final class RefreshListsCommand extends Command
     }
 
     /** @return list<string> */
-    private static function parse(string $body): array
+    private function parse(string $body): array
     {
         $domains = [];
 

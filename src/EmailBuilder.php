@@ -136,8 +136,8 @@ final class EmailBuilder implements JsonSerializable, Stringable
         }
 
         $theirs = $other instanceof Email
-            ? (new self((string) $other, $this->treatSubaddressAsDistinct))->canonical()
-            : (new self($other, $this->treatSubaddressAsDistinct))->canonical();
+            ? new self((string) $other, $this->treatSubaddressAsDistinct)->canonical()
+            : new self($other, $this->treatSubaddressAsDistinct)->canonical();
 
         return $mine === $theirs;
     }
