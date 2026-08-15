@@ -1,0 +1,94 @@
+{
+    "name": "laranail/email",
+    "description": "Email validation utilities for Laravel \u2014 an address value object, maintained disposable and role-account lists, and a cached deliverability resolver.",
+    "keywords": [
+        "laravel",
+        "email",
+        "validation",
+        "disposable-email",
+        "deliverability"
+    ],
+    "homepage": "https://opensource.simtabi.com/products/laranail/email",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Imani Manyara",
+            "email": "imani@simtabi.com",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/laranail/email/issues",
+        "source": "https://github.com/laranail/email",
+        "docs": "https://opensource.simtabi.com/documentation/laranail/email/"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/laranail/validation"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/laranail/package-tools"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/laranail/console"
+        }
+    ],
+    "require": {
+        "illuminate/console": "^13.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
+        "laranail/console": "^0.1",
+        "laranail/package-tools": "^0.1",
+        "laranail/validation": "^0.1",
+        "php": "^8.4.1 || ^8.5"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.9.3",
+        "laravel/pint": "^1.29",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^3.0||^4.4.5",
+        "pestphp/pest-plugin-arch": "^3.0||^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0||^4.1",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.5.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Simtabi\\Laranail\\Email\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Simtabi\\Laranail\\Email\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint",
+        "rector": "vendor/bin/rector process"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Simtabi\\Laranail\\Email\\EmailServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

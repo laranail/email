@@ -1,0 +1,47 @@
+name: Feature request
+description: Suggest a rule, builder method, or capability for laranail/validation
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. For open-ended ideas or questions, the
+        [Discussions board](https://github.com/laranail/validation/discussions) is often a better fit.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is awkward or impossible today? Describe the situation, not the solution.
+      placeholder: When validating ..., there is no way to ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      description: What the fluent chain would look like if this existed.
+      render: php
+      placeholder: |
+        FluentRule::string()->required()->newMethod('example');
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds tried, and why they fall short.
+    validations:
+      required: false
+
+  - type: input
+    id: laravel-equivalent
+    attributes:
+      label: Laravel equivalent
+      description: The native rule string or `Rule` call this maps onto, if there is one.
+      placeholder: "required_if_accepted:field"
+    validations:
+      required: false

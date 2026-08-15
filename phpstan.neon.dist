@@ -1,0 +1,32 @@
+parameters:
+    tmpDir: .cache/phpstan
+
+    paths:
+        - src
+        - tests
+
+    level: max
+
+    treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        # Pest's test API is not statically expressible: inside a closure
+        # PHPStan resolves $this to TestCall rather than the TestCase, so
+        # $this->artisan() and friends look undefined, and expect() chains
+        # return mixed. These are the shape of the framework, not defects —
+        # the same set laranail/validation carries.
+        - identifier: method.notFound
+          path: tests/
+          reportUnmatched: false
+        - identifier: method.nonObject
+          path: tests/
+          reportUnmatched: false
+        - identifier: property.notFound
+          path: tests/
+          reportUnmatched: false
+        - identifier: offsetAccess.nonOffsetAccessible
+          path: tests/
+          reportUnmatched: false
+        - identifier: argument.type
+          path: tests/
+          reportUnmatched: false
