@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        php: ['8.4', '8.5']
+        php: ['8.5']
         stability: [prefer-lowest, prefer-stable]
 
     steps:

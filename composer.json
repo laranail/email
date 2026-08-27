@@ -37,7 +37,7 @@
         }
     ],
     "require": {
-        "php": "^8.4.1 || ^8.5",
+        "php": "^8.5",
         "illuminate/bus": "^13.0",
         "illuminate/cache": "^13.0",
         "illuminate/console": "^13.0",
