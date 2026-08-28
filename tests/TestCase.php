@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Simtabi\Laranail\Email\Providers\EmailServiceProvider;
 use Simtabi\Laranail\Validation\Providers\ValidationServiceProvider;
+use Simtabi\Laranail\Package\Tools\Testing\IsolatedTestCase;
 
-abstract class TestCase extends Orchestra
+abstract class TestCase extends IsolatedTestCase
 {
     /** @return list<class-string> */
     protected function getPackageProviders($app): array
