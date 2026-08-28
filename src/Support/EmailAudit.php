@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Support;
 
-use ArrayIterator;
 use Countable;
-use IteratorAggregate;
-use JsonSerializable;
-use Simtabi\Laranail\Email\EmailBatch;
 use Traversable;
+use ArrayIterator;
+use JsonSerializable;
+use IteratorAggregate;
+use Simtabi\Laranail\Email\EmailBatch;
 
 /**
  * The verdict on a whole list of addresses.
@@ -31,8 +31,8 @@ use Traversable;
 final readonly class EmailAudit implements Countable, IteratorAggregate, JsonSerializable
 {
     /**
-     * @param  list<EmailAuditEntry>  $entries
-     * @param  bool  $checkedReachability  Whether the pass performed MX lookups at all
+     * @param list<EmailAuditEntry> $entries
+     * @param bool $checkedReachability Whether the pass performed MX lookups at all
      */
     public function __construct(
         public array $entries,
@@ -183,13 +183,13 @@ final readonly class EmailAudit implements Countable, IteratorAggregate, JsonSer
         $duplicates = count($this->duplicates());
 
         return [
-            'total' => count($this->entries),
-            'usable' => $usable,
-            'unusable' => count($this->entries) - $usable,
-            'unparseable' => count(array_filter($this->entries, static fn (EmailAuditEntry $e): bool => ! $e->isParseable())),
-            'duplicates' => $duplicates,
-            'distinct' => count($this->entries) - $duplicates,
-            'domains' => count($this->domains()),
+            'total'                => count($this->entries),
+            'usable'               => $usable,
+            'unusable'             => count($this->entries) - $usable,
+            'unparseable'          => count(array_filter($this->entries, static fn (EmailAuditEntry $e): bool => ! $e->isParseable())),
+            'duplicates'           => $duplicates,
+            'distinct'             => count($this->entries) - $duplicates,
+            'domains'              => count($this->domains()),
             'checked_reachability' => $this->checkedReachability,
         ];
     }

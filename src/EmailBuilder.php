@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email;
 
+use Stringable;
 use JsonSerializable;
 use Simtabi\Laranail\Phone\PhoneBuilder;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
-use Stringable;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /**
  * The fluent entry point: say what you have, then ask what you want.
@@ -45,6 +45,11 @@ final class EmailBuilder implements JsonSerializable, Stringable
         private readonly ?string $input,
         private readonly bool $treatSubaddressAsDistinct = false,
     ) {}
+
+    public function __toString(): string
+    {
+        return (string) ($this->value() ?? $this->input ?? '');
+    }
 
     // ---------------------------------------------------------------- narrowing
 
@@ -114,7 +119,7 @@ final class EmailBuilder implements JsonSerializable, Stringable
         }
 
         return $this->treatSubaddressAsDistinct
-            ? mb_strtolower($email->localPart).'@'.$email->domain
+            ? mb_strtolower($email->localPart) . '@' . $email->domain
             : $email->canonical();
     }
 
@@ -190,9 +195,10 @@ final class EmailBuilder implements JsonSerializable, Stringable
      * Returning the whole set rather than the first failure, because a form that reports one problem
      * per submission makes the user discover them one round trip at a time.
      *
-     * @param  bool  $checkReachability  Perform the MX lookup. Off by default: it is the only check here
-     *                                   that touches the network, and a caller iterating a list of ten
-     *                                   thousand addresses should opt into that deliberately.
+     * @param bool $checkReachability Perform the MX lookup. Off by default: it is the only check here
+     *                                that touches the network, and a caller iterating a list of ten
+     *                                thousand addresses should opt into that deliberately.
+     *
      * @return list<string>
      */
     public function problems(bool $checkReachability = false): array
@@ -232,13 +238,13 @@ final class EmailBuilder implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'address' => $this->value() === null ? null : (string) $this->value(),
-            'local_part' => $this->localPart(),
-            'domain' => $this->domain(),
-            'mailbox' => $this->mailbox(),
-            'tag' => $this->tag(),
-            'canonical' => $this->canonical(),
-            'disposable' => $this->isDisposable(),
+            'address'      => $this->value() === null ? null : (string) $this->value(),
+            'local_part'   => $this->localPart(),
+            'domain'       => $this->domain(),
+            'mailbox'      => $this->mailbox(),
+            'tag'          => $this->tag(),
+            'canonical'    => $this->canonical(),
+            'disposable'   => $this->isDisposable(),
             'role_account' => $this->isRoleAccount(),
         ];
     }
@@ -247,10 +253,5 @@ final class EmailBuilder implements JsonSerializable, Stringable
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    public function __toString(): string
-    {
-        return (string) ($this->value() ?? $this->input ?? '');
     }
 }

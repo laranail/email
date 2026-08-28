@@ -35,6 +35,22 @@ final class MaintainedDisposableDomainList implements DisposableDomainList
         private readonly ?string $bundledPath = null,
     ) {}
 
+    public static function defaultRefreshedPath(): string
+    {
+        $configured = config('laranail.email.lists.path');
+
+        $directory = is_string($configured) && $configured !== ''
+            ? $configured
+            : storage_path('app/laranail-email');
+
+        return $directory . '/disposable-domains.txt';
+    }
+
+    public static function bundledPath(): string
+    {
+        return dirname(__DIR__, 2) . '/resources/data/disposable-domains.txt';
+    }
+
     public function contains(string $domain): bool
     {
         $domain = mb_strtolower(trim($domain, ". \t\n\r\0\x0B"));
@@ -87,21 +103,5 @@ final class MaintainedDisposableDomainList implements DisposableDomainList
         }
 
         return $this->domains = DomainFile::load($this->bundledPath ?? self::bundledPath());
-    }
-
-    public static function defaultRefreshedPath(): string
-    {
-        $configured = config('laranail.email.lists.path');
-
-        $directory = is_string($configured) && $configured !== ''
-            ? $configured
-            : storage_path('app/laranail-email');
-
-        return $directory.'/disposable-domains.txt';
-    }
-
-    public static function bundledPath(): string
-    {
-        return dirname(__DIR__, 2).'/resources/data/disposable-domains.txt';
     }
 }

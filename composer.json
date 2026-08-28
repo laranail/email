@@ -1,6 +1,6 @@
 {
     "name": "laranail/email",
-    "description": "Email validation utilities for Laravel — an address value object, maintained disposable and role-account lists, and a cached deliverability resolver.",
+    "description": "Email validation utilities for Laravel \u2014 an address value object, maintained disposable and role-account lists, and a cached deliverability resolver.",
     "keywords": [
         "laravel",
         "email",
@@ -81,8 +81,8 @@
             "@phpstan",
             "@rector"
         ],
-        "pint": "vendor/bin/pint --test",
-        "pint-fix": "vendor/bin/pint",
+        "pint": "vendor/bin/pint --test --config vendor/laranail/package-tools/pint.json",
+        "pint-fix": "vendor/bin/pint --parallel --config vendor/laranail/package-tools/pint.json",
         "phpstan": "vendor/bin/phpstan analyse --no-progress",
         "analyse": "@phpstan",
         "rector": "vendor/bin/rector process --dry-run",
