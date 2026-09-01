@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Simtabi\Laranail\Email\EmailScanner;
 use Simtabi\Laranail\Email\Enums\ScanLeniency;
+use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 use Simtabi\Laranail\Email\Support\EmailMatch;
 use Simtabi\Laranail\Email\Testing\FakeDnsResolver;
-use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 
 /*
@@ -117,7 +117,7 @@ it('replaces from the end, so earlier offsets stay valid', function (): void {
     // The bug every hand-rolled version of this has, and it only shows on the second address.
     $replaced = EmailAddress::replaceIn(
         'from alice@example.com to bob@example.org',
-        static fn (EmailMatch $m): string => '<' . $m->email->domain . '>',
+        static fn (EmailMatch $m): string => '<'.$m->email->domain.'>',
     );
 
     expect($replaced)->toBe('from <example.com> to <example.org>');
@@ -162,10 +162,10 @@ it('serialises a match with everything a client needs to act on it', function ()
     $json = EmailAddress::find('write to Alice+News@Example.COM')[0]->toArray();
 
     expect($json)->toMatchArray([
-        'raw'       => 'Alice+News@Example.COM',
-        'offset'    => 9,
-        'address'   => 'Alice+News@example.com',
+        'raw' => 'Alice+News@Example.COM',
+        'offset' => 9,
+        'address' => 'Alice+News@example.com',
         'canonical' => 'alice@example.com',
-        'domain'    => 'example.com',
+        'domain' => 'example.com',
     ])->and($json['end'])->toBe(9 + strlen('Alice+News@Example.COM'));
 });

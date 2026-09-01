@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\SetList;
 use Rector\CodeQuality\Rector\BooleanOr\RepeatedOrEqualToInArrayRector;
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
+use Rector\Config\RectorConfig;
+use Rector\Set\ValueObject\SetList;
 
 /**
  * Pinned to the **php84** set, matching this package's `^8.4.1 || ^8.5` floor — the same choice
@@ -17,9 +17,9 @@ use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
  * `config:cache` works — and there is nothing there for a code-quality rule to improve.
  */
 return RectorConfig::configure()
-    ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
+    ->withPaths([__DIR__.'/src', __DIR__.'/tests'])
     ->withSkip([
-        __DIR__ . '/vendor',
+        __DIR__.'/vendor',
 
         // Rewrites `$x === null` into `! $x instanceof \Fully\Qualified\Name`, inlining an FQCN into
         // a condition that was already clear. For a `?self` parameter the null check *is* the
