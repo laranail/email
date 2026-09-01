@@ -43,12 +43,12 @@ final class MaintainedDisposableDomainList implements DisposableDomainList
             ? $configured
             : storage_path('app/laranail-email');
 
-        return $directory . '/disposable-domains.txt';
+        return $directory.'/disposable-domains.txt';
     }
 
     public static function bundledPath(): string
     {
-        return dirname(__DIR__, 2) . '/resources/data/disposable-domains.txt';
+        return dirname(__DIR__, 2).'/resources/data/disposable-domains.txt';
     }
 
     public function contains(string $domain): bool

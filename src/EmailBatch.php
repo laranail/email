@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Email;
 
 use Generator;
-use Stringable;
 use Simtabi\Laranail\Email\Support\EmailAudit;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 use Simtabi\Laranail\Email\Support\EmailAuditReport;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
+use Stringable;
 
 /**
  * Judges a list of addresses in one pass.
@@ -54,9 +54,9 @@ final readonly class EmailBatch
     /**
      * Parse and judge every input, and return the whole verdict.
      *
-     * @param iterable<mixed, string|null> $inputs
-     * @param bool $checkReachability Perform MX lookups, once per distinct domain
-     * @param bool $keepSubaddress Treat `alice+news@` and `alice@` as different mailboxes
+     * @param  iterable<mixed, string|null>  $inputs
+     * @param  bool  $checkReachability  Perform MX lookups, once per distinct domain
+     * @param  bool  $keepSubaddress  Treat `alice+news@` and `alice@` as different mailboxes
      */
     public function audit(iterable $inputs, bool $checkReachability = false, bool $keepSubaddress = false): EmailAudit
     {
@@ -106,8 +106,7 @@ final readonly class EmailBatch
      * here is per address and cached only by the resolver, which is why it is not offered at all
      * rather than offered badly.
      *
-     * @param iterable<mixed, string|null> $inputs
-     *
+     * @param  iterable<mixed, string|null>  $inputs
      * @return Generator<int, EmailAuditEntry>
      */
     public function each(iterable $inputs, bool $keepSubaddress = false): Generator
@@ -158,7 +157,7 @@ final readonly class EmailBatch
      * says `checked_reachability: false` rather than leaving it to be inferred from an absent
      * `unreachable` count.
      *
-     * @param iterable<mixed, string|null> $inputs
+     * @param  iterable<mixed, string|null>  $inputs
      */
     public function report(iterable $inputs, bool $keepSubaddress = false): EmailAuditReport
     {
@@ -177,8 +176,7 @@ final readonly class EmailBatch
      * The operation an import actually needs. `array_unique()` keeps all four spellings of one
      * mailbox, and a `SELECT DISTINCT` keeps them too.
      *
-     * @param iterable<mixed, string|null> $inputs
-     *
+     * @param  iterable<mixed, string|null>  $inputs
      * @return list<string>
      */
     public function unique(iterable $inputs, bool $keepSubaddress = false): array
@@ -197,8 +195,7 @@ final readonly class EmailBatch
     /**
      * Parse every row once, keyed by index.
      *
-     * @param iterable<mixed, string|null> $inputs
-     *
+     * @param  iterable<mixed, string|null>  $inputs
      * @return list<array{0: string|null, 1: Email|null, 2: string|null}>
      */
     private function rows(iterable $inputs, bool $keepSubaddress): array
@@ -221,8 +218,7 @@ final readonly class EmailBatch
     /**
      * One MX lookup per distinct domain, not one per address.
      *
-     * @param list<array{0: string|null, 1: Email|null, 2: string|null}> $rows
-     *
+     * @param  list<array{0: string|null, 1: Email|null, 2: string|null}>  $rows
      * @return array<string, bool>
      */
     private function reachabilityByDomain(array $rows): array
@@ -279,7 +275,7 @@ final readonly class EmailBatch
         }
 
         return $keepSubaddress
-            ? mb_strtolower($email->localPart) . '@' . $email->domain
+            ? mb_strtolower($email->localPart).'@'.$email->domain
             : $email->canonical();
     }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Email\Tests;
 
 use Simtabi\Laranail\Email\Providers\EmailServiceProvider;
-use Simtabi\Laranail\Validation\Providers\ValidationServiceProvider;
 use Simtabi\Laranail\Package\Tools\Testing\IsolatedTestCase;
+use Simtabi\Laranail\Validation\Providers\ValidationServiceProvider;
 
 abstract class TestCase extends IsolatedTestCase
 {
