@@ -28,21 +28,21 @@ final readonly class EmailPresenter
         $problems = $email->problems($checkReachability);
 
         return [
-            'input' => (string) $email,
-            'parseable' => $email->isParseable(),
-            'usable' => $problems === [],
-            'address' => $email->value() === null ? null : (string) $email->value(),
-            'canonical' => $email->canonical(),
-            'local_part' => $email->localPart(),
-            'domain' => $email->domain(),
-            'mailbox' => $email->mailbox(),
-            'tag' => $email->tag(),
-            'disposable' => $email->isDisposable(),
+            'input'        => (string) $email,
+            'parseable'    => $email->isParseable(),
+            'usable'       => $problems === [],
+            'address'      => $email->value() === null ? null : (string) $email->value(),
+            'canonical'    => $email->canonical(),
+            'local_part'   => $email->localPart(),
+            'domain'       => $email->domain(),
+            'mailbox'      => $email->mailbox(),
+            'tag'          => $email->tag(),
+            'disposable'   => $email->isDisposable(),
             'role_account' => $email->isRoleAccount(),
             // Null rather than false when the check did not run. A false here would read as "we
             // looked and there is no mail exchanger", which is a different and much stronger claim.
             'reachable' => $checkReachability ? $email->isReachable() : null,
-            'problems' => $problems,
+            'problems'  => $problems,
         ];
     }
 

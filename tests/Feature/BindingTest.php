@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
-use Simtabi\Laranail\Email\Lists\MaintainedRoleAccountList;
 use Simtabi\Laranail\Email\Resolvers\CachedDnsResolver;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
+use Simtabi\Laranail\Email\Lists\MaintainedRoleAccountList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
-use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
 use Simtabi\Laranail\Validation\Rules\Email\NotDisposableEmail;
+use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
+use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /**
  * The point of this package: validation's rules keep working unchanged, but
@@ -23,8 +23,8 @@ it('replaces every fallback validation binds', function (string $contract, strin
     expect(resolve($contract))->toBeInstanceOf($expected);
 })->with([
     'disposable domains' => [DisposableDomainList::class, MaintainedDisposableDomainList::class],
-    'role accounts' => [RoleAccountList::class, MaintainedRoleAccountList::class],
-    'dns resolver' => [DnsResolver::class, CachedDnsResolver::class],
+    'role accounts'      => [RoleAccountList::class, MaintainedRoleAccountList::class],
+    'dns resolver'       => [DnsResolver::class, CachedDnsResolver::class],
 ]);
 
 it('makes validation’s email rules use the maintained lists', function (): void {
