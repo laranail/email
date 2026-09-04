@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Simtabi\Laranail\Email\EmailBatch;
-use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 use Simtabi\Laranail\Email\Testing\FakeDnsResolver;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
+use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,10 +42,10 @@ it('answers per-row and in aggregate from one pass', function (): void {
 
     expect($audit)->toHaveCount(5)
         ->and($audit->summary())->toMatchArray([
-            'total' => 5,
+            'total'       => 5,
             'unparseable' => 1,
-            'duplicates' => 2,
-            'distinct' => 3,
+            'duplicates'  => 2,
+            'distinct'    => 3,
         ])
         ->and($audit->unique())->toBe(['alice@example.com', 'support@example.com'])
         ->and($audit->problems())->toMatchArray(['role_account' => 1, 'unparseable' => 1]);
@@ -184,11 +184,11 @@ it('serialises the whole verdict, entries and all', function (): void {
 
     expect($json)->toHaveKeys(['summary', 'domains', 'problems', 'duplicates', 'entries'])
         ->and($json['entries'][0])->toMatchArray([
-            'index' => 0,
-            'input' => 'Alice+News@Example.COM',
-            'canonical' => 'alice@example.com',
-            'mailbox' => 'Alice',
-            'tag' => 'News',
+            'index'        => 0,
+            'input'        => 'Alice+News@Example.COM',
+            'canonical'    => 'alice@example.com',
+            'mailbox'      => 'Alice',
+            'tag'          => 'News',
             'duplicate_of' => null,
         ]);
 });

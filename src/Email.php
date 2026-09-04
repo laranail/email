@@ -44,7 +44,7 @@ final readonly class Email implements Stringable
 
     public function __toString(): string
     {
-        return $this->localPart.'@'.$this->domain;
+        return $this->localPart . '@' . $this->domain;
     }
 
     /** Parse an address, or null if it has no local part and domain. */
@@ -99,7 +99,7 @@ final readonly class Email implements Stringable
      */
     public function canonical(): string
     {
-        return mb_strtolower($this->mailbox()).'@'.$this->domain;
+        return mb_strtolower($this->mailbox()) . '@' . $this->domain;
     }
 
     /** Whether the domain is the given one, or a subdomain of it. */
@@ -107,7 +107,7 @@ final readonly class Email implements Stringable
     {
         $domain = mb_strtolower(trim($domain, ". \t\n\r\0\x0B"));
 
-        return $this->domain === $domain || str_ends_with($this->domain, '.'.$domain);
+        return $this->domain === $domain || str_ends_with($this->domain, '.' . $domain);
     }
 
     /** Same mailbox, ignoring case and tags. */
