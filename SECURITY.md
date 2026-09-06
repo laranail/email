@@ -7,7 +7,7 @@ are not backported.
 
 ## Reporting a vulnerability
 
-Email [opensource@simtabi.com](mailto:opensource@simtabi.com) with a description of the
+Email [security@simtabi.com](mailto:security@simtabi.com) with a description of the
 issue, the affected version, and — where you can — a minimal reproduction. You can also
 use GitHub's [private vulnerability reporting](https://github.com/laranail/email/security/advisories/new).
 
