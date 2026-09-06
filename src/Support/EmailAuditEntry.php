@@ -21,11 +21,11 @@ use Simtabi\Laranail\Email\Email;
 final readonly class EmailAuditEntry implements JsonSerializable
 {
     /**
-     * @param  int  $index  Position in the input list
-     * @param  string|null  $input  Exactly what was supplied, unmodified
-     * @param  list<string>  $problems  Every failure, not the first one
-     * @param  bool|null  $reachable  Null when reachability was not checked at all
-     * @param  int|null  $duplicateOf  The index of the first row with the same canonical address
+     * @param int $index Position in the input list
+     * @param string|null $input Exactly what was supplied, unmodified
+     * @param list<string> $problems Every failure, not the first one
+     * @param bool|null $reachable Null when reachability was not checked at all
+     * @param int|null $duplicateOf The index of the first row with the same canonical address
      */
     public function __construct(
         public int $index,
@@ -83,18 +83,18 @@ final readonly class EmailAuditEntry implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'index' => $this->index,
-            'input' => $this->input,
-            'parseable' => $this->isParseable(),
-            'usable' => $this->isUsable(),
-            'address' => $this->email === null ? null : (string) $this->email,
-            'canonical' => $this->canonical,
-            'local_part' => $this->email?->localPart,
-            'domain' => $this->email?->domain,
-            'mailbox' => $this->email?->mailbox(),
-            'tag' => $this->email?->tag(),
-            'problems' => $this->problems,
-            'reachable' => $this->reachable,
+            'index'        => $this->index,
+            'input'        => $this->input,
+            'parseable'    => $this->isParseable(),
+            'usable'       => $this->isUsable(),
+            'address'      => $this->email === null ? null : (string) $this->email,
+            'canonical'    => $this->canonical,
+            'local_part'   => $this->email?->localPart,
+            'domain'       => $this->email?->domain,
+            'mailbox'      => $this->email?->mailbox(),
+            'tag'          => $this->email?->tag(),
+            'problems'     => $this->problems,
+            'reachable'    => $this->reachable,
             'duplicate_of' => $this->duplicateOf,
         ];
     }

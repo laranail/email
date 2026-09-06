@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Commands;
 
+use Throwable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 use Simtabi\Laranail\Email\Lists\DomainFile;
 use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
-use Throwable;
+use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 /**
  * Refresh the disposable-domain list from its upstream source.
@@ -50,7 +50,7 @@ final class RefreshListsCommand extends Command
         try {
             $response = Http::timeout(30)->get($source);
         } catch (Throwable $e) {
-            $this->components->error('Fetch failed: '.$e->getMessage());
+            $this->components->error('Fetch failed: ' . $e->getMessage());
 
             return self::FAILURE;
         }
@@ -98,13 +98,13 @@ final class RefreshListsCommand extends Command
 
         $header = implode("\n", [
             '# Disposable email domains.',
-            '# Source: '.$source,
+            '# Source: ' . $source,
             '# Licence: CC0 1.0 (public domain).',
             '# Written by laranail::email.refresh-lists — do not edit by hand.',
             '',
         ]);
 
-        if (file_put_contents($path, $header.implode("\n", $domains)."\n") === false) {
+        if (file_put_contents($path, $header . implode("\n", $domains) . "\n") === false) {
             $this->components->error("Could not write {$path}.");
 
             return self::FAILURE;

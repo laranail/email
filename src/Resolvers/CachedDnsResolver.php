@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Resolvers;
 
-use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Support\Facades\Cache;
-use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Throwable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\Cache\Repository;
+use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 
 /**
  * The production MX resolver, replacing the one `laranail/validation` bundles.
@@ -58,7 +58,7 @@ final readonly class CachedDnsResolver implements DnsResolver
         }
 
         $store = $this->cache ?? $this->defaultStore();
-        $key = self::CACHE_PREFIX.$domain;
+        $key = self::CACHE_PREFIX . $domain;
 
         if ($store instanceof Repository) {
             $cached = $store->get($key);

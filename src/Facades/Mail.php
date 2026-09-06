@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Email\Facades;
 
 use Generator;
-use Illuminate\Support\Facades\Facade;
 use Simtabi\Laranail\Email\Email;
+use Illuminate\Support\Facades\Facade;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailBuilder;
 use Simtabi\Laranail\Email\EmailManager;
 use Simtabi\Laranail\Email\EmailScanner;
 use Simtabi\Laranail\Email\Enums\ScanLeniency;
 use Simtabi\Laranail\Email\Support\EmailAudit;
+use Simtabi\Laranail\Email\Support\EmailMatch;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 use Simtabi\Laranail\Email\Support\EmailAuditReport;
-use Simtabi\Laranail\Email\Support\EmailMatch;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /**
  * The package's entry point, over {@see EmailManager}.

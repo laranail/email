@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
 use Simtabi\Laranail\Email\Lists\MaintainedRoleAccountList;
+use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
 use Simtabi\Laranail\Validation\Support\Email\BundledRoleAccountList;
 
 it('recognises a listed disposable domain', function (): void {
@@ -35,7 +35,7 @@ it('does not match a lookalike parent', function (): void {
 });
 
 it('prefers a refreshed list over the bundled snapshot', function (): void {
-    $refreshed = sys_get_temp_dir().'/laranail-email-refreshed.txt';
+    $refreshed = sys_get_temp_dir() . '/laranail-email-refreshed.txt';
     file_put_contents($refreshed, "# test\nonly-this-one.test\n");
 
     $list = new MaintainedDisposableDomainList(refreshedPath: $refreshed);
@@ -52,7 +52,7 @@ it('falls back to the snapshot when the refreshed file is empty', function (): v
     // An empty refreshed file means a truncated download, not a world with no
     // disposable domains. A list that quietly becomes empty is worse than no
     // list, because the application still believes it is filtering.
-    $refreshed = sys_get_temp_dir().'/laranail-email-empty.txt';
+    $refreshed = sys_get_temp_dir() . '/laranail-email-empty.txt';
     file_put_contents($refreshed, "# nothing but comments\n");
 
     $list = new MaintainedDisposableDomainList(refreshedPath: $refreshed);
