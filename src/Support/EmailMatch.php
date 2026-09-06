@@ -39,12 +39,12 @@ final readonly class EmailMatch implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'raw' => $this->raw,
-            'offset' => $this->offset,
-            'end' => $this->end(),
-            'address' => (string) $this->email,
+            'raw'       => $this->raw,
+            'offset'    => $this->offset,
+            'end'       => $this->end(),
+            'address'   => (string) $this->email,
             'canonical' => $this->email->canonical(),
-            'domain' => $this->email->domain,
+            'domain'    => $this->email->domain,
         ];
     }
 

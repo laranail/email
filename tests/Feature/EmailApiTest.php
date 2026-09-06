@@ -129,7 +129,7 @@ describe('with the API enabled', function (): void {
         config()->set('laranail.email.api.allow_reachability', false);
 
         $this->postJson('api/laranail/email/scan', [
-            'text' => 'alice@example.com',
+            'text'     => 'alice@example.com',
             'leniency' => 'DELIVERABLE',
         ])->assertOk()->assertJsonPath('meta.count', 1);
     });
@@ -175,7 +175,7 @@ describe('middleware', function (): void {
         ApiRoutes::register(config());
         Route::getRoutes()->refreshNameLookups();
 
-        $route = Route::getRoutes()->getByName(ApiRoutes::NAME_PREFIX.'batch');
+        $route = Route::getRoutes()->getByName(ApiRoutes::NAME_PREFIX . 'batch');
 
         expect($route)->not->toBeNull()
             ->and($route->gatherMiddleware())->toContain('auth:sanctum', 'throttle:60,1');
