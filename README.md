@@ -4,7 +4,7 @@
 [![Static analysis](https://github.com/laranail/email/actions/workflows/phpstan.yml/badge.svg)](https://github.com/laranail/email/actions/workflows/phpstan.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`laranail/email` is not published to Packagist, so there is no registry-version badge to show — see [Install](#install).
+`laranail/email` is not published to Packagist, so there is no registry-version badge to show: see [Install](#install).
 
 > Email utilities for Laravel — a fluent API over an address value object that parses correctly, from one address to a whole list: canonicalisation for deduplication, maintained disposable and role-account lists, a cached deliverability resolver, batch auditing and an opt-in HTTP API.
 
