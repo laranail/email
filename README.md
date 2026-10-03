@@ -29,7 +29,23 @@ stops catching anything new:
 Schedule::command('laranail::email.refresh-lists')->weekly();
 ```
 
-## Quick start
+## Quick start guide and usage
+
+### Getting started
+
+With the refresh scheduled (above), run it once by hand to confirm it can write, and publish
+the config only if you want to change it (it lands in `config/laranail/email.php`):
+
+```bash
+php artisan laranail::email.refresh-lists --dry-run
+php artisan laranail::email.refresh-lists
+php artisan vendor:publish --tag=laranail::email-config
+```
+
+Until the refresh has run, the bundled snapshot is used. No routes are added; the HTTP API is off
+until you enable it.
+
+### Usage
 
 ```php
 use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
