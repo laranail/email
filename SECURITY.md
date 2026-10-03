@@ -1,5 +1,7 @@
 # Security policy
 
+Where this file is silent, the [laranail security policy](https://github.com/laranail/.github/blob/HEAD/SECURITY.md) applies.
+
 ## Supported versions
 
 Security fixes land on the latest `0.1.x` release. The package is pre-1.0 and older tags

@@ -1,5 +1,7 @@
 # Contributing
 
+Where this file is silent, the [laranail contributing guide](https://github.com/laranail/.github/blob/HEAD/CONTRIBUTING.md) applies.
+
 Issues and pull requests are welcome. This package ships as a Composer library, so every
 public class, method, and config key is part of a surface downstream consumers depend on —
 changes are weighed against that.
