@@ -105,3 +105,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `illuminate/cache` added to `require`. `CachedDnsResolver` has always used the `Cache` facade, so
   the dependency was real and merely undeclared — it worked in an application and would have failed a
   resolve of the package on its own.
+
+[Unreleased]: https://github.com/laranail/email/compare/v0.1.0...HEAD
