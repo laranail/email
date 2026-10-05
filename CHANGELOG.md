@@ -9,6 +9,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `require` declares what `src/` uses directly: `illuminate/config` and `illuminate/container`
+  (`config()`, `app()`), and `laravel/framework`, for `Illuminate\Foundation\Bus\Dispatchable` in
+  `AuditEmailColumn` and the global helpers, which are defined only in
+  `Illuminate/Foundation/helpers.php`. `laravel/framework` replaces every `illuminate/*` split, so an application installs nothing
+  new. `tests/Unit/DeclaredRequirementsTest.php` now fails when `src/` uses an Illuminate component,
+  facade or global helper that `require` does not name.
+
 - **Breaking.** The PHP floor is `^8.5`, up from `^8.4.1`. `laranail/validation` is a
   runtime dependency (its `Contracts\Email\*` are imported across ten source files) and is
   itself `^8.5`, so the declared floor and the 8.4 CI cell were both untrue: the cell could
