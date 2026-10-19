@@ -61,7 +61,7 @@
         "illuminate/support": "^13.0",
         "illuminate/validation": "^13.0",
         "laranail/console": "^0.1",
-        "laranail/package-tools": "^0.1",
+        "laranail/package-tools": "^0.1.10",
         "laranail/validation": "^0.1",
         "laravel/framework": "^13.0"
     },

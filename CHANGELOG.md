@@ -9,6 +9,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- A guard now keeps literal credentials out of the tests, and every credential the tests generate is named with a single-word purpose, so secret scanning has nothing to report. `laranail/package-tools` in `require` is now `^0.1.10`, the first release with the purpose check.
 - `require` declares what `src/` uses directly: `illuminate/config` and `illuminate/container`
   (`config()`, `app()`), and `laravel/framework`, for `Illuminate\Foundation\Bus\Dispatchable` in
   `AuditEmailColumn` and the global helpers, which are defined only in
