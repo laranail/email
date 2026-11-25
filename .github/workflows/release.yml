@@ -74,13 +74,13 @@ jobs:
           # run — which is precisely the case the fallback exists for.
           section() {
             awk -v want="$1" '
-              $0 ~ "^## \\[?" want "\\]?" { f=1; next }
+              index($0, "## [" want "]") == 1 { f=1; next }
               f && /^## / { exit }
               f { print }
             ' CHANGELOG.md | grep -v '^\[.*\]: http' || true
           }
 
-          notes=$(section "$version")
+          notes=$(section "${version%%-*}")
 
           # Pre-1.0 the tag moves and the changes are still under Unreleased, so there is no
           # version section to find. Use that rather than falling back to a stub.
@@ -103,6 +103,8 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          make_latest: ${{ !contains(github.ref_name, '-') }}
           generate_release_notes: true
           body: ${{ steps.changelog.outputs.body }}
           files: email.cdx.json

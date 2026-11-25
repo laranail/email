@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Http;
 
+use Simtabi\Laranail\Email\Email;
 use Simtabi\Laranail\Email\EmailBuilder;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 
@@ -31,7 +32,7 @@ final readonly class EmailPresenter
             'input'        => (string) $email,
             'parseable'    => $email->isParseable(),
             'usable'       => $problems === [],
-            'address'      => $email->value() === null ? null : (string) $email->value(),
+            'address'      => $email->value() instanceof Email ? (string) $email->value() : null,
             'canonical'    => $email->canonical(),
             'local_part'   => $email->localPart(),
             'domain'       => $email->domain(),

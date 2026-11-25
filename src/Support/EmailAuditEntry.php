@@ -87,7 +87,7 @@ final readonly class EmailAuditEntry implements JsonSerializable
             'input'        => $this->input,
             'parseable'    => $this->isParseable(),
             'usable'       => $this->isUsable(),
-            'address'      => $this->email === null ? null : (string) $this->email,
+            'address'      => $this->email instanceof Email ? (string) $this->email : null,
             'canonical'    => $this->canonical,
             'local_part'   => $this->email?->localPart,
             'domain'       => $this->email?->domain,

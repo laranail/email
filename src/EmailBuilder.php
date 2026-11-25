@@ -80,7 +80,7 @@ final class EmailBuilder implements JsonSerializable, Stringable
 
     public function isParseable(): bool
     {
-        return $this->value() !== null;
+        return $this->value() instanceof Email;
     }
 
     public function localPart(): ?string
@@ -114,7 +114,7 @@ final class EmailBuilder implements JsonSerializable, Stringable
     {
         $email = $this->value();
 
-        if ($email === null) {
+        if (! $email instanceof Email) {
             return null;
         }
 
@@ -238,7 +238,7 @@ final class EmailBuilder implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'address'      => $this->value() === null ? null : (string) $this->value(),
+            'address'      => $this->value() instanceof Email ? (string) $this->value() : null,
             'local_part'   => $this->localPart(),
             'domain'       => $this->domain(),
             'mailbox'      => $this->mailbox(),
