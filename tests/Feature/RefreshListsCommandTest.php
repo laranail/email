@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\Http;
 use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
 
 beforeEach(function (): void {
-    config()->set('laranail.email.lists.path', sys_get_temp_dir() . '/laranail-email-test');
+    config()->set('laranail.email.lists.path', sys_get_temp_dir().'/laranail-email-test');
     @unlink(MaintainedDisposableDomainList::defaultRefreshedPath());
 });
 
@@ -39,7 +39,7 @@ it('refuses to write a result implausibly smaller than the current list', functi
 it('ignores anything that is not shaped like a domain', function (): void {
     // An HTML error page served with a 200 would otherwise become thousands
     // of "domains".
-    $body = "<html><body>Rate limited</body></html>\n" . implode("\n", array_map(
+    $body = "<html><body>Rate limited</body></html>\n".implode("\n", array_map(
         static fn (int $i): string => "spam{$i}.test",
         range(1, 9000),
     ));

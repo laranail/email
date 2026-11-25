@@ -116,7 +116,7 @@ final readonly class EmailScanner
      * before it — the bug every hand-rolled version of this has, and it only shows up on the second
      * address in a document.
      *
-     * @param callable(EmailMatch): string $replace
+     * @param  callable(EmailMatch): string  $replace
      */
     public function replace(?string $text, callable $replace, ?ScanLeniency $leniency = null): ?string
     {
@@ -150,7 +150,7 @@ final readonly class EmailScanner
                 $local = $match->email->localPart;
                 $kept = mb_substr($local, 0, 1);
 
-                return $kept . str_repeat($maskChar, max(1, mb_strlen($local) - 1)) . '@' . $match->email->domain;
+                return $kept.str_repeat($maskChar, max(1, mb_strlen($local) - 1)).'@'.$match->email->domain;
             },
             $leniency ?? ScanLeniency::Possible,
         );
@@ -173,7 +173,7 @@ final readonly class EmailScanner
     }
 
     /**
-     * @param array<string, bool> $reachable Memo of MX answers, one per domain per scan
+     * @param  array<string, bool>  $reachable  Memo of MX answers, one per domain per scan
      */
     private function accepts(Email $email, ScanLeniency $leniency, array &$reachable): bool
     {

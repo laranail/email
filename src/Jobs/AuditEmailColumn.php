@@ -6,15 +6,15 @@ namespace Simtabi\Laranail\Email\Jobs;
 
 use Generator;
 use Illuminate\Bus\Queueable;
-use InvalidArgumentException;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Queue\SerializesModels;
-use Simtabi\Laranail\Email\EmailBatch;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
+use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\Support\EmailAuditReport;
 
 /**
@@ -70,13 +70,13 @@ class AuditEmailColumn implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @param class-string<Model> $model
-     * @param string $column The column holding the addresses
-     * @param bool $keepSubaddress Treat `alice+news@` and `alice@` as different mailboxes
-     * @param string $key Cache key suffix the report is written under
-     * @param int $chunk Rows per query
-     * @param string|null $scope A named query scope to constrain the rows, applied without arguments
-     * @param int|null $ttl Seconds to keep the report; null keeps it until evicted
+     * @param  class-string<Model>  $model
+     * @param  string  $column  The column holding the addresses
+     * @param  bool  $keepSubaddress  Treat `alice+news@` and `alice@` as different mailboxes
+     * @param  string  $key  Cache key suffix the report is written under
+     * @param  int  $chunk  Rows per query
+     * @param  string|null  $scope  A named query scope to constrain the rows, applied without arguments
+     * @param  int|null  $ttl  Seconds to keep the report; null keeps it until evicted
      */
     public function __construct(
         public string $model,
@@ -98,13 +98,13 @@ class AuditEmailColumn implements ShouldQueue
     /** The cache key the report lands under. */
     public function cacheKey(): string
     {
-        return 'laranail.email.audit.' . $this->key;
+        return 'laranail.email.audit.'.$this->key;
     }
 
     /** The cache key carrying how many rows have been read so far. */
     public function progressKey(): string
     {
-        return $this->cacheKey() . '.progress';
+        return $this->cacheKey().'.progress';
     }
 
     /**
@@ -122,7 +122,7 @@ class AuditEmailColumn implements ShouldQueue
         if (! $instance instanceof Model) {
             throw new InvalidArgumentException(
                 "[{$this->model}] is not an Eloquent model. This job reads a column from a table, so "
-                . 'it needs a model class rather than an arbitrary source.',
+                .'it needs a model class rather than an arbitrary source.',
             );
         }
 
@@ -136,8 +136,8 @@ class AuditEmailColumn implements ShouldQueue
             if (! $scoped instanceof Builder) {
                 throw new InvalidArgumentException(
                     "The scope [{$this->scope}] on [{$this->model}] did not return a query builder. "
-                    . 'A scope that returns anything else cannot be chained, and silently ignoring it '
-                    . 'would audit the whole table while appearing to audit a subset.',
+                    .'A scope that returns anything else cannot be chained, and silently ignoring it '
+                    .'would audit the whole table while appearing to audit a subset.',
                 );
             }
 

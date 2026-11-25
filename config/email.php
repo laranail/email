@@ -57,7 +57,7 @@ return [
     */
 
     'dns' => [
-        'store'        => env('LARANAIL_EMAIL_DNS_STORE'),
+        'store' => env('LARANAIL_EMAIL_DNS_STORE'),
         'positive_ttl' => (int) env('LARANAIL_EMAIL_DNS_POSITIVE_TTL', 86400),
         'negative_ttl' => (int) env('LARANAIL_EMAIL_DNS_NEGATIVE_TTL', 300),
     ],

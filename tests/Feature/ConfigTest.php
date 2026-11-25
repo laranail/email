@@ -59,7 +59,7 @@ it('registers API routes to controller actions, not closures, so route:cache wor
 
 it('leaves no closures in the config file, so config:cache still works', function (): void {
     // A closure in config is a deploy-time failure, not a development one.
-    $config = require dirname(__DIR__, 2) . '/config/email.php';
+    $config = require dirname(__DIR__, 2).'/config/email.php';
 
     $walk = function (array $values) use (&$walk): void {
         foreach ($values as $value) {

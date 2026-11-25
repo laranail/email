@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Http;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\Email\Http\Controllers\EmailApiController;
 
 /**

@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Providers;
 
+use Illuminate\Contracts\Config\Repository;
+use Simtabi\Laranail\Email\Commands\RefreshListsCommand;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailManager;
 use Simtabi\Laranail\Email\EmailScanner;
-use Simtabi\Laranail\Email\Http\ApiRoutes;
-use Illuminate\Contracts\Config\Repository;
-use Simtabi\Laranail\Package\Tools\Package;
 use Simtabi\Laranail\Email\Enums\ScanLeniency;
+use Simtabi\Laranail\Email\Http\ApiRoutes;
 use Simtabi\Laranail\Email\Http\EmailPresenter;
-use Simtabi\Laranail\Email\Resolvers\CachedDnsResolver;
-use Simtabi\Laranail\Email\Commands\RefreshListsCommand;
-use Simtabi\Laranail\Email\Lists\MaintainedRoleAccountList;
-use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Email\Lists\MaintainedDisposableDomainList;
-use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Email\Lists\MaintainedRoleAccountList;
+use Simtabi\Laranail\Email\Resolvers\CachedDnsResolver;
+use Simtabi\Laranail\Package\Tools\Package;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
 use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
+use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
+use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
 
 /**
  * Binds this package's implementations over the fallbacks that

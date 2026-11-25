@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Cache;
-use Simtabi\Laranail\Email\Testing\FakeDnsResolver;
 use Simtabi\Laranail\Email\Resolvers\CachedDnsResolver;
+use Simtabi\Laranail\Email\Testing\FakeDnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Rules\Network\DeliverableEmail;
 

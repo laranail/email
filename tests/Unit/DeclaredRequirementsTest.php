@@ -23,35 +23,35 @@ declare(strict_types=1);
 
 /** @var array<string, string> facade => package */
 const EMAIL_FACADES = [
-    'App'         => 'illuminate/container', 'Artisan' => 'illuminate/console', 'Auth' => 'illuminate/auth',
-    'Blade'       => 'illuminate/view', 'Broadcast' => 'illuminate/broadcasting', 'Bus' => 'illuminate/bus',
-    'Cache'       => 'illuminate/cache', 'Config' => 'illuminate/config', 'Context' => 'illuminate/log',
-    'Cookie'      => 'illuminate/cookie', 'Crypt' => 'illuminate/encryption', 'Date' => 'illuminate/support',
-    'DB'          => 'illuminate/database', 'Event' => 'illuminate/events', 'Facade' => 'illuminate/support',
-    'File'        => 'illuminate/filesystem', 'Gate' => 'illuminate/auth', 'Hash' => 'illuminate/hashing',
-    'Http'        => 'illuminate/http', 'Lang' => 'illuminate/translation', 'Log' => 'illuminate/log',
-    'Mail'        => 'illuminate/mail', 'Notification' => 'illuminate/notifications', 'Password' => 'illuminate/auth',
-    'Pipeline'    => 'illuminate/pipeline', 'Process' => 'illuminate/process', 'Queue' => 'illuminate/queue',
+    'App' => 'illuminate/container', 'Artisan' => 'illuminate/console', 'Auth' => 'illuminate/auth',
+    'Blade' => 'illuminate/view', 'Broadcast' => 'illuminate/broadcasting', 'Bus' => 'illuminate/bus',
+    'Cache' => 'illuminate/cache', 'Config' => 'illuminate/config', 'Context' => 'illuminate/log',
+    'Cookie' => 'illuminate/cookie', 'Crypt' => 'illuminate/encryption', 'Date' => 'illuminate/support',
+    'DB' => 'illuminate/database', 'Event' => 'illuminate/events', 'Facade' => 'illuminate/support',
+    'File' => 'illuminate/filesystem', 'Gate' => 'illuminate/auth', 'Hash' => 'illuminate/hashing',
+    'Http' => 'illuminate/http', 'Lang' => 'illuminate/translation', 'Log' => 'illuminate/log',
+    'Mail' => 'illuminate/mail', 'Notification' => 'illuminate/notifications', 'Password' => 'illuminate/auth',
+    'Pipeline' => 'illuminate/pipeline', 'Process' => 'illuminate/process', 'Queue' => 'illuminate/queue',
     'RateLimiter' => 'illuminate/cache', 'Redirect' => 'illuminate/routing', 'Redis' => 'illuminate/redis',
-    'Request'     => 'illuminate/http', 'Response' => 'illuminate/routing', 'Route' => 'illuminate/routing',
-    'Schedule'    => 'illuminate/console', 'Schema' => 'illuminate/database', 'Session' => 'illuminate/session',
-    'Storage'     => 'illuminate/filesystem', 'URL' => 'illuminate/routing', 'Validator' => 'illuminate/validation',
-    'View'        => 'illuminate/view', 'Vite' => 'laravel/framework',
+    'Request' => 'illuminate/http', 'Response' => 'illuminate/routing', 'Route' => 'illuminate/routing',
+    'Schedule' => 'illuminate/console', 'Schema' => 'illuminate/database', 'Session' => 'illuminate/session',
+    'Storage' => 'illuminate/filesystem', 'URL' => 'illuminate/routing', 'Validator' => 'illuminate/validation',
+    'View' => 'illuminate/view', 'Vite' => 'laravel/framework',
 ];
 
 /** @var array<string, string|null> helper => package it reaches (null: Foundation itself) */
 const EMAIL_HELPERS = [
-    'abort'         => null, 'abort_if' => null, 'abort_unless' => null, 'app' => 'illuminate/container',
-    'app_path'      => null, 'auth' => 'illuminate/auth', 'base_path' => null, 'bcrypt' => 'illuminate/hashing',
-    'cache'         => 'illuminate/cache', 'config' => 'illuminate/config', 'config_path' => null,
+    'abort' => null, 'abort_if' => null, 'abort_unless' => null, 'app' => 'illuminate/container',
+    'app_path' => null, 'auth' => 'illuminate/auth', 'base_path' => null, 'bcrypt' => 'illuminate/hashing',
+    'cache' => 'illuminate/cache', 'config' => 'illuminate/config', 'config_path' => null,
     'database_path' => null, 'dispatch' => 'illuminate/bus', 'event' => 'illuminate/events',
-    'info'          => 'illuminate/log', 'lang_path' => null, 'logger' => 'illuminate/log', 'now' => 'illuminate/support',
-    'public_path'   => null, 'redirect' => 'illuminate/routing', 'report' => null, 'request' => 'illuminate/http',
-    'rescue'        => null, 'resolve' => 'illuminate/container', 'resource_path' => null,
-    'response'      => 'illuminate/routing', 'route' => 'illuminate/routing', 'session' => 'illuminate/session',
-    'storage_path'  => null, 'to_route' => 'illuminate/routing', 'today' => 'illuminate/support',
-    'trans'         => 'illuminate/translation', 'trans_choice' => 'illuminate/translation', '__' => 'illuminate/translation',
-    'url'           => 'illuminate/routing', 'validator' => 'illuminate/validation', 'view' => 'illuminate/view',
+    'info' => 'illuminate/log', 'lang_path' => null, 'logger' => 'illuminate/log', 'now' => 'illuminate/support',
+    'public_path' => null, 'redirect' => 'illuminate/routing', 'report' => null, 'request' => 'illuminate/http',
+    'rescue' => null, 'resolve' => 'illuminate/container', 'resource_path' => null,
+    'response' => 'illuminate/routing', 'route' => 'illuminate/routing', 'session' => 'illuminate/session',
+    'storage_path' => null, 'to_route' => 'illuminate/routing', 'today' => 'illuminate/support',
+    'trans' => 'illuminate/translation', 'trans_choice' => 'illuminate/translation', '__' => 'illuminate/translation',
+    'url' => 'illuminate/routing', 'validator' => 'illuminate/validation', 'view' => 'illuminate/view',
 ];
 
 /** @return array<string, list<string>> package => evidence ("file:line") */
@@ -61,7 +61,7 @@ function emailUsedIlluminatePackages(): array
     $used = [];
     $files = 0;
 
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/src', FilesystemIterator::SKIP_DOTS));
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/src', FilesystemIterator::SKIP_DOTS));
 
     foreach ($iterator as $file) {
         if ($file->getExtension() !== 'php') {
@@ -85,17 +85,17 @@ function emailUsedIlluminatePackages(): array
                 continue;
             }
 
-            $where = $relative . ':' . ($index + 1);
+            $where = $relative.':'.($index + 1);
 
             preg_match_all('/Illuminate\\\\([A-Za-z]+)\\\\(?:Facades\\\\([A-Za-z]+))?/', $line, $names, PREG_SET_ORDER);
 
             foreach ($names as $name) {
                 if ($name[1] === 'Support' && ($name[2] ?? '') !== '') {
-                    $package = EMAIL_FACADES[$name[2]] ?? 'unmapped facade ' . $name[2];
+                    $package = EMAIL_FACADES[$name[2]] ?? 'unmapped facade '.$name[2];
                 } elseif ($name[1] === 'Foundation') {
                     $package = 'laravel/framework';
                 } else {
-                    $package = 'illuminate/' . strtolower($name[1]);
+                    $package = 'illuminate/'.strtolower($name[1]);
                 }
 
                 $used[$package][] = $where;
@@ -109,10 +109,10 @@ function emailUsedIlluminatePackages(): array
                     continue;
                 }
 
-                $used['laravel/framework'][] = $where . ' (' . $helper . '())';
+                $used['laravel/framework'][] = $where.' ('.$helper.'())';
 
                 if (EMAIL_HELPERS[$helper] !== null) {
-                    $used[EMAIL_HELPERS[$helper]][] = $where . ' (' . $helper . '())';
+                    $used[EMAIL_HELPERS[$helper]][] = $where.' ('.$helper.'())';
                 }
             }
         }
@@ -126,7 +126,7 @@ function emailUsedIlluminatePackages(): array
 }
 
 it('declares every illuminate component that src/ uses', function (): void {
-    $composer = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/composer.json'), true, flags: JSON_THROW_ON_ERROR);
+    $composer = json_decode((string) file_get_contents(dirname(__DIR__, 2).'/composer.json'), true, flags: JSON_THROW_ON_ERROR);
 
     $missing = [];
 

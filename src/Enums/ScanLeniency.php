@@ -51,8 +51,8 @@ enum ScanLeniency: string
     public function label(): string
     {
         return match ($this) {
-            self::Possible    => 'Anything address-shaped',
-            self::Valid       => 'Has a real-looking domain',
+            self::Possible => 'Anything address-shaped',
+            self::Valid => 'Has a real-looking domain',
             self::Deliverable => 'Domain accepts mail',
         };
     }
