@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Simtabi\Laranail\Email\EmailBatch;
-use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Schema\Blueprint;
 use Simtabi\Laranail\Email\Jobs\AuditEmailColumn;
-use Simtabi\Laranail\Email\Support\EmailAuditReport;
 use Simtabi\Laranail\Email\Testing\FakeDnsResolver;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
+use Simtabi\Laranail\Email\Support\EmailAuditReport;
+use Simtabi\Laranail\Email\Facades\Mail as EmailAddress;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /*
 |--------------------------------------------------------------------------
@@ -192,7 +192,8 @@ class Subscriber extends Model
     protected $guarded = [];
 
     /**
-     * @param  Builder<self>  $query
+     * @param Builder<self> $query
+     *
      * @return Builder<self>
      */
     public function scopeActive(Builder $query): Builder
@@ -204,7 +205,7 @@ class Subscriber extends Model
      * Deliberately wrong: a scope that does not return a builder cannot be chained, and the job
      * should say so rather than quietly auditing the whole table.
      *
-     * @param  Builder<self>  $query
+     * @param Builder<self> $query
      */
     public function scopeNotAScope(Builder $query): string
     {

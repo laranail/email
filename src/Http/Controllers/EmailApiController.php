@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Email\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
 use Simtabi\Laranail\Email\EmailBatch;
 use Simtabi\Laranail\Email\EmailManager;
 use Simtabi\Laranail\Email\EmailScanner;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Simtabi\Laranail\Email\Enums\ScanLeniency;
+use Simtabi\Laranail\Email\Support\EmailMatch;
 use Simtabi\Laranail\Email\Http\EmailPresenter;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
-use Simtabi\Laranail\Email\Support\EmailMatch;
 
 /**
  * The package over HTTP, for the callers that are not PHP.
@@ -48,9 +48,9 @@ final readonly class EmailApiController
     public function analyze(Request $request): JsonResponse
     {
         $input = $this->validate($request, [
-            'email' => ['required', 'string', 'max:320'],
+            'email'              => ['required', 'string', 'max:320'],
             'check_reachability' => ['sometimes', 'boolean'],
-            'keep_subaddress' => ['sometimes', 'boolean'],
+            'keep_subaddress'    => ['sometimes', 'boolean'],
         ]);
 
         $address = $input['email'];
@@ -103,8 +103,8 @@ final readonly class EmailApiController
                 ...$audit->report(),
                 'unusable' => array_map(
                     static fn (EmailAuditEntry $entry): array => [
-                        'index' => $entry->index,
-                        'input' => $entry->input,
+                        'index'    => $entry->index,
+                        'input'    => $entry->input,
                         'problems' => $entry->problems,
                     ],
                     $audit->unusable(),
@@ -123,7 +123,7 @@ final readonly class EmailApiController
     public function scan(Request $request): JsonResponse
     {
         $input = $this->validate($request, [
-            'text' => ['required', 'string', 'max:100000'],
+            'text'     => ['required', 'string', 'max:100000'],
             'leniency' => ['nullable', Rule::in(array_column(ScanLeniency::cases(), 'value'))],
         ]);
 
@@ -144,7 +144,8 @@ final readonly class EmailApiController
     }
 
     /**
-     * @param  array<string, mixed>  $rules
+     * @param array<string, mixed> $rules
+     *
      * @return array<array-key, mixed>
      *
      * @throws ValidationException
@@ -168,17 +169,17 @@ final readonly class EmailApiController
         $validated = $this->validate($request, [
             // Enforced rather than applied: a caller that sent more than the cap gets a 422 naming
             // the field, never a truncated answer it has no way to notice.
-            'emails' => ['required', 'array', 'min:1', "max:{$max}"],
-            'emails.*' => ['nullable', 'string', 'max:320'],
+            'emails'             => ['required', 'array', 'min:1', "max:{$max}"],
+            'emails.*'           => ['nullable', 'string', 'max:320'],
             'check_reachability' => ['sometimes', 'boolean'],
-            'keep_subaddress' => ['sometimes', 'boolean'],
+            'keep_subaddress'    => ['sometimes', 'boolean'],
         ]);
 
         return $validated;
     }
 
     /**
-     * @param  array<array-key, mixed>  $input
+     * @param array<array-key, mixed> $input
      */
     private function wantsReachability(array $input): bool
     {

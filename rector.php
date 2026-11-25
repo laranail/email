@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-use Rector\CodeQuality\Rector\BooleanOr\RepeatedOrEqualToInArrayRector;
-use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\SetList;
+use Rector\CodeQuality\Rector\BooleanOr\RepeatedOrEqualToInArrayRector;
 
 /**
  * Pinned to the **php84** set, matching this package's `^8.4.1 || ^8.5` floor — the same choice
@@ -17,14 +16,13 @@ use Rector\Set\ValueObject\SetList;
  * `config:cache` works — and there is nothing there for a code-quality rule to improve.
  */
 return RectorConfig::configure()
-    ->withPaths([__DIR__.'/src', __DIR__.'/tests'])
+    ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
     ->withSkip([
-        __DIR__.'/vendor',
+        __DIR__ . '/vendor',
 
         // Rewrites `$x === null` into `! $x instanceof \Fully\Qualified\Name`, inlining an FQCN into
         // a condition that was already clear. For a `?self` parameter the null check *is* the
         // intent, and the instanceof form reads as a type guard that is not what the code means.
-        FlipTypeControlToUseExclusiveTypeRector::class,
 
         // Collapses `$p === false || $p === 0 || $p === $len - 1` into an `in_array` over a
         // three-element array. Shorter, and worse on both counts that matter: the three comparisons

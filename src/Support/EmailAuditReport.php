@@ -153,13 +153,13 @@ final class EmailAuditReport implements JsonSerializable
     public function summary(): array
     {
         return [
-            'total' => $this->total,
-            'usable' => $this->usable,
-            'unusable' => $this->total - $this->usable,
-            'unparseable' => $this->unparseable,
-            'duplicates' => $this->duplicates,
-            'distinct' => $this->total - $this->duplicates,
-            'domains' => count($this->domains),
+            'total'                => $this->total,
+            'usable'               => $this->usable,
+            'unusable'             => $this->total - $this->usable,
+            'unparseable'          => $this->unparseable,
+            'duplicates'           => $this->duplicates,
+            'distinct'             => $this->total - $this->duplicates,
+            'domains'              => count($this->domains),
             'checked_reachability' => $this->checkedReachability,
         ];
     }
@@ -221,10 +221,10 @@ final class EmailAuditReport implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'summary' => $this->summary(),
-            'domains' => $this->domains(),
-            'problems' => $this->problems(),
-            'duplicates' => $this->duplicateGroups(),
+            'summary'          => $this->summary(),
+            'domains'          => $this->domains(),
+            'problems'         => $this->problems(),
+            'duplicates'       => $this->duplicateGroups(),
             'duplicate_counts' => $this->duplicateCounts(),
         ];
     }
@@ -257,8 +257,9 @@ final class EmailAuditReport implements JsonSerializable
     }
 
     /**
-     * @param  array<string, int>  $into
-     * @param  array<string, int>  $from
+     * @param array<string, int> $into
+     * @param array<string, int> $from
+     *
      * @return array<string, int>
      */
     private function addTallies(array $into, array $from): array
@@ -271,7 +272,8 @@ final class EmailAuditReport implements JsonSerializable
     }
 
     /**
-     * @param  array<string, int>  $counts
+     * @param array<string, int> $counts
+     *
      * @return array<string, int>
      */
     private function sorted(array $counts): array

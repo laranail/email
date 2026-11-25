@@ -7,12 +7,12 @@ namespace Simtabi\Laranail\Email;
 use Generator;
 use Simtabi\Laranail\Email\Enums\ScanLeniency;
 use Simtabi\Laranail\Email\Support\EmailAudit;
+use Simtabi\Laranail\Email\Support\EmailMatch;
 use Simtabi\Laranail\Email\Support\EmailAuditEntry;
 use Simtabi\Laranail\Email\Support\EmailAuditReport;
-use Simtabi\Laranail\Email\Support\EmailMatch;
-use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 use Simtabi\Laranail\Validation\Contracts\Email\DnsResolver;
 use Simtabi\Laranail\Validation\Contracts\Email\RoleAccountList;
+use Simtabi\Laranail\Validation\Contracts\Email\DisposableDomainList;
 
 /**
  * What the `Mail` facade resolves to.
@@ -56,7 +56,8 @@ final readonly class EmailManager
      * `alice@example.com` are one person signing up three times, and a naive `array_unique` keeps
      * all three.
      *
-     * @param  iterable<mixed, string|null>  $addresses
+     * @param iterable<mixed, string|null> $addresses
+     *
      * @return list<string>
      */
     public function unique(iterable $addresses, bool $keepSubaddress = false): array
@@ -80,7 +81,7 @@ final readonly class EmailManager
      * `checkReachability` groups its MX lookups per domain, so ten thousand addresses at one
      * provider cost one lookup rather than ten thousand.
      *
-     * @param  iterable<mixed, string|null>  $addresses
+     * @param iterable<mixed, string|null> $addresses
      */
     public function audit(iterable $addresses, bool $checkReachability = false, bool $keepSubaddress = false): EmailAudit
     {
@@ -91,7 +92,8 @@ final readonly class EmailManager
      * The same pass, streamed. Nothing is accumulated, so the input may be larger than memory —
      * at the cost of per-domain reachability, which needs the whole list to group by.
      *
-     * @param  iterable<mixed, string|null>  $addresses
+     * @param iterable<mixed, string|null> $addresses
+     *
      * @return Generator<int, EmailAuditEntry>
      */
     public function each(iterable $addresses, bool $keepSubaddress = false): Generator
@@ -105,7 +107,7 @@ final readonly class EmailManager
      * O(distinct) rather than O(n), so this is the one to reach for when the input is a database
      * column or a file rather than a form submission. No reachability — see {@see EmailBatch::report()}.
      *
-     * @param  iterable<mixed, string|null>  $addresses
+     * @param iterable<mixed, string|null> $addresses
      */
     public function report(iterable $addresses, bool $keepSubaddress = false): EmailAuditReport
     {
@@ -137,7 +139,7 @@ final readonly class EmailManager
     /**
      * Replace every address found, offsets handled.
      *
-     * @param  callable(EmailMatch): string  $replace
+     * @param callable(EmailMatch): string $replace
      */
     public function replaceIn(?string $text, callable $replace, ?ScanLeniency $leniency = null): ?string
     {
